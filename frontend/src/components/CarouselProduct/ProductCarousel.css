@@ -1,0 +1,95 @@
+@import '../../global.css';
+
+.container-carousel {
+    position: relative;
+    width: 100%;
+    max-height: 400px;
+    max-width: 600px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 1rem;
+    aspect-ratio: 1 / 1;
+}
+
+.container-image-product {
+    width: 100%;
+    height: 100%;
+}
+
+.image-product {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: opacity 0.3s ease;
+}
+
+.container-arrow-buttons {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 1rem;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.container-icon {
+    pointer-events: auto;
+    background-color: var(--icons-background-first, rgba(255, 255, 255, 0.8));
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+}
+
+.container-icon:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.btn-icon-heart {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background-color: var(--icons-background-first, rgba(255, 255, 255, 0.8));
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.btn-icon-heart:hover, .container-icon:hover {
+    background-color: #fff;
+    transform: scale(1.1);
+}
+
+.img-icon {
+    font-size: 1.2rem;
+    color: var(--fifth-color);
+}
+
+@media (max-width: 480px) {
+    .container-icon, .btn-icon-heart {
+        width: 2.2rem;
+        height: 2.2rem;
+    }
+    
+    .img-icon {
+        font-size: 1rem;
+    }
+}

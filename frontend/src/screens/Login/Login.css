@@ -1,0 +1,106 @@
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background-color: #f2f2f2;
+}
+
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo {
+  font-size: 40px;
+  margin-bottom: 20px;
+}
+
+.pbx-logo{
+  width: 4rem;
+}
+
+.logo .p {
+  color: #ff5a3c;
+  font-weight: bold;
+}
+
+.logo .b {
+  color: #2ecc71;
+  font-weight: bold;
+  margin-left: 5px;
+}
+
+.logo .x {
+  color: #6c2bd9;
+  font-weight: bold;
+  margin-left: 5px;
+}
+
+.card {
+  background: #fff;
+  padding: 25px;
+  border-radius: 8px;
+  width: 320px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+label {
+  font-size: 14px;
+  color: #555;
+  margin-top: 10px;
+  display: block;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-field .eye {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  font-size: 12px;
+  color: #555;
+  cursor: pointer;
+}
+
+/* button {
+  width: 100%;
+  margin-top: 20px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #ff5a3c;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #e14a2f;
+} */
+
+.forgot {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #777;
+  cursor: pointer;
+}
+
+.forgot:hover {
+  text-decoration: underline;
+}
