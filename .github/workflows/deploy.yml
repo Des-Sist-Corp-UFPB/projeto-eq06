@@ -1,3 +1,4 @@
+
 # =============================================================================
 # GitHub Actions — Build, Segurança e Deploy
 # =============================================================================
@@ -46,7 +47,7 @@ name: Build & Deploy
 
 on:
   push:
-    branches: [main]
+    branches: [main, feature/login-react]
   workflow_dispatch:        # Permite disparar o workflow manualmente pelo GitHub
 
 # Variáveis de ambiente globais (disponíveis em todos os jobs)
@@ -122,7 +123,7 @@ jobs:
       # Escaneia o projeto em busca de vulnerabilidades nas bibliotecas Maven
       # (lê o pom.xml e os JARs em target/) e por segredos vazados no código.
       - name: Trivy — scan de dependências e segredos
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: fs
           scan-ref: .
@@ -236,7 +237,7 @@ jobs:
       # exit-code: '1' → falha o job se encontrar HIGH/CRITICAL (com correção disponível).
       # ignore-unfixed: true → não falha por vulns sem patch ainda — apenas as que têm solução.
       - name: Trivy — scan de vulnerabilidades na imagem Docker
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: mercado:scan
           format: table
@@ -292,7 +293,7 @@ jobs:
           username: ghactions
           key: ${{ secrets.SSH_DEPLOY_KEY }}
           source: docker/docker-compose.prod.yml
-          target: /home/ghactions/mercado/
+          target: mercado/
 
       # Script de deploy executado no servidor via SSH.
       # envs: passa variáveis de ambiente do Actions para o script remoto.
@@ -312,7 +313,7 @@ jobs:
           script: |
             set -euo pipefail
 
-            DEPLOY_DIR="/home/ghactions/mercado"
+            DEPLOY_DIR="$HOME/mercado"
             COMPOSE_FILE="$DEPLOY_DIR/docker/docker-compose.prod.yml"
 
             echo "======================================================"
@@ -377,6 +378,4 @@ jobs:
             docker image prune -f > /dev/null
             echo "✓ Imagens antigas removidas"
 
-            echo "======================================================"
-            echo " Deploy concluído com sucesso: $(date)"
-            echo "======================================================"
+            echo "=========================================

@@ -109,7 +109,7 @@ public class SecurityConfig {
                         // /webjars/** → Bootstrap, HTMX (servidos pelo Spring como recursos estáticos)
                         // /css/**, /js/** → arquivos estáticos personalizados
                         // /actuator/health → monitoramento sem autenticação
-                        .requestMatchers("/webjars/**", "/css/**", "/js/**", "/actuator/health").permitAll()
+                        .requestMatchers("/", "/index.html", "/home", "/favorites", "/criar-conta", "/info/**", "/checkout", "/assets/**", "/webjars/**", "/css/**", "/js/**", "/images/**", "/actuator/health").permitAll()
                         // Qualquer outra requisição exige autenticação
                         .anyRequest().authenticated()
                 )
@@ -139,9 +139,8 @@ public class SecurityConfig {
                 // Para HTMX funcionar com PUT/DELETE, precisamos de uma configuração especial.
                 // Em produção real, considere usar o mecanismo de CSRF com SameSite cookies.
                 .csrf(csrf -> csrf
-                        // Desabilita CSRF apenas para os endpoints de produtos (usados pelo HTMX)
-                        // ALTERNATIVA SEGURA: configure HTMX para enviar o token CSRF nos headers
-                        .ignoringRequestMatchers("/produtos/**")
+                        // Desabilita CSRF apenas para os endpoints de produtos e login
+                        .ignoringRequestMatchers("/produtos/**", "/login")
                 );
 
         return http.build();
