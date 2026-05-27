@@ -9,7 +9,7 @@
 # CONFIGURAÇÃO — arquivo .env na raiz do projeto no servidor:
 #
 #   APP_IMAGE=ghcr.io/usuario/mercado:latest   ← atualizado automaticamente pelo CI/CD
-#   DATABASE_URL=jdbc:postgresql://postgres:5432/mercado_prod
+#   DATABASE_URL=jdbc:postgresql://postgres:5432/eq06
 #   DATABASE_USERNAME=mercado
 #   DATABASE_PASSWORD=<senha-forte-aqui>
 #
@@ -33,7 +33,7 @@ services:
     image: postgres:16-alpine
     container_name: mercado-postgres-prod
     environment:
-      POSTGRES_DB: mercado_prod
+      POSTGRES_DB: eq06
       POSTGRES_USER: ${DATABASE_USERNAME}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
     volumes:
@@ -45,7 +45,7 @@ services:
     expose:
       - "5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME} -d mercado_prod"]
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME} -d eq06"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -68,7 +68,7 @@ services:
     image: ${APP_IMAGE}
     container_name: mercado-app-prod
     environment:
-      DATABASE_URL: ${DATABASE_URL:-jdbc:postgresql://postgres:5432/mercado_prod}
+      DATABASE_URL: ${DATABASE_URL:-jdbc:postgresql://postgres:5432/eq06}
       DATABASE_USERNAME: ${DATABASE_USERNAME}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
     ports:
@@ -93,5 +93,5 @@ volumes:
   postgres-prod-data:
 
 networks:
-  mercado-net:
-    driver: bridge
+    mercado-net:
+        driver: bridge
