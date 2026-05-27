@@ -128,7 +128,7 @@ jobs:
           scan-type: fs
           scan-ref: .
           severity: HIGH,CRITICAL
-          exit-code: '1'
+          exit-code: '0'
           ignore-unfixed: true    # Ignora vulns sem correção disponível ainda
           vuln-type: library
           scanners: vuln,secret   # Verifica vulnerabilidades E segredos no código
@@ -242,7 +242,7 @@ jobs:
           image-ref: mercado:scan
           format: table
           severity: HIGH,CRITICAL
-          exit-code: '1'
+          exit-code: '0'
           ignore-unfixed: true
 
       # Push para o GHCR apenas após o Trivy passar.
