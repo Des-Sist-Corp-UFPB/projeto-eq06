@@ -380,4 +380,3 @@ jobs:
             echo "======================================================"
             echo " Deploy concluído com sucesso: $(date)"
             echo "======================================================"
-Getting DOM...Pressing key...Stopping...
