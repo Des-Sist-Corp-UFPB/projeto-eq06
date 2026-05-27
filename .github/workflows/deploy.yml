@@ -288,6 +288,7 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: dsc.rodrigor.com
+          port: 8106
           username: ghactions
           key: ${{ secrets.SSH_DEPLOY_KEY }}
           script: |
@@ -302,6 +303,7 @@ jobs:
         uses: appleboy/scp-action@v0.1.7
         with:
           host: dsc.rodrigor.com
+          port: 8106
           username: ghactions
           key: ${{ secrets.SSH_DEPLOY_KEY }}
           source: docker/docker-compose.prod.yml
@@ -318,6 +320,7 @@ jobs:
           IMAGE_FULL: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
         with:
           host: dsc.rodrigor.com
+          port: 8106
           username: ghactions
           key: ${{ secrets.SSH_DEPLOY_KEY }}
           envs: GHCR_TOKEN,GHCR_USER,IMAGE_FULL
