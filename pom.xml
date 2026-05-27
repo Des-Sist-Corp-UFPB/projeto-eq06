@@ -214,6 +214,8 @@
                                 <suppressionFile>owasp-suppressions.xml</suppressionFile>
                             </suppressionFiles>
                             <formats>HTML,JSON</formats>
+                            <nodeAnalyzerEnabled>false</nodeAnalyzerEnabled>
+                            <nodeAuditAnalyzerEnabled>false</nodeAuditAnalyzerEnabled>
                         </configuration>
                         <executions>
                             <execution>
