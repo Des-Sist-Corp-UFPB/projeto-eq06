@@ -46,7 +46,7 @@ name: Build & Deploy
 
 on:
   push:
-    branches: [main]
+    branches: [main, feature/login-react]
   workflow_dispatch:        # Permite disparar o workflow manualmente pelo GitHub
 
 # Variáveis de ambiente globais (disponíveis em todos os jobs)
@@ -292,7 +292,7 @@ jobs:
           username: ghactions
           key: ${{ secrets.SSH_DEPLOY_KEY }}
           source: docker/docker-compose.prod.yml
-          target: /home/ghactions/mercado/
+          target: mercado/
 
       # Script de deploy executado no servidor via SSH.
       # envs: passa variáveis de ambiente do Actions para o script remoto.
@@ -312,7 +312,7 @@ jobs:
           script: |
             set -euo pipefail
 
-            DEPLOY_DIR="/home/ghactions/mercado"
+            DEPLOY_DIR="$HOME/mercado"
             COMPOSE_FILE="$DEPLOY_DIR/docker/docker-compose.prod.yml"
 
             echo "======================================================"
@@ -380,3 +380,4 @@ jobs:
             echo "======================================================"
             echo " Deploy concluído com sucesso: $(date)"
             echo "======================================================"
+Getting DOM...Pressing key...Stopping...
