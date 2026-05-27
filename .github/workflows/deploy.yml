@@ -53,7 +53,7 @@ on:
 # Variáveis de ambiente globais (disponíveis em todos os jobs)
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}   # ex.: usuario/mercado → ghcr.io/usuario/mercado
+  IMAGE_NAME: des-sist-corp-ufpb/projeto-eq06
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
@@ -283,6 +283,17 @@ jobs:
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
+
+      - name: Preparar servidor (Criar pastas)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: dsc.rodrigor.com
+          username: ghactions
+          key: ${{ secrets.SSH_DEPLOY_KEY }}
+          script: |
+            mkdir -p /home/ghactions/mercado/docker
+            # Garante que o .env exista para não falhar depois
+            touch /home/ghactions/mercado/.env
 
       # Copia o docker-compose.prod.yml para o servidor a cada deploy.
       # Garante que o servidor sempre tem a versão mais recente do arquivo,
