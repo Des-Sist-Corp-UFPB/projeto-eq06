@@ -378,9 +378,4 @@ jobs:
             docker image prune -f > /dev/null
             echo "✓ Imagens antigas removidas"
 
-            echo "======================================================"
-            echo " Deploy concluído com sucesso: $(date)"
-            echo "======================================================"
-Pressing key...Clicking...Stopping...
-
-Stop Agent
+            echo "=========================================
