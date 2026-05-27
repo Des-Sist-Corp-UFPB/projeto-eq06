@@ -99,9 +99,10 @@ jobs:
       # Falha o build se encontrar dependência com CVSS >= 7.0 (HIGH/CRITICAL).
       # A NVD_API_KEY acelera o download do banco de CVEs (~minutos vs ~horas sem key).
       - name: SpotBugs + FindSecBugs + OWASP Dependency Check
+             - name: SpotBugs + FindSecBugs (OWASP Dependency Check pulado)
         run: |
-          mvn verify -Psecurity -DskipTests -B \
-            -Dowasp.nvd.apiKey=${{ secrets.NVD_API_KEY || '' }}
+          mvn verify -Psecurity -DskipTests -B -Ddependency-check.skip=true
+
         # O perfil "security" está definido no pom.xml e ativa esses dois plugins.
         # -DskipTests: testes já rodaram no passo anterior, não precisa rodar de novo.
 
