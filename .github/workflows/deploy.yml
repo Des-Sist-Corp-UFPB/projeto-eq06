@@ -98,8 +98,7 @@ jobs:
       # Cruza as dependências do projeto com o banco de CVEs do NVD (NIST).
       # Falha o build se encontrar dependência com CVSS >= 7.0 (HIGH/CRITICAL).
       # A NVD_API_KEY acelera o download do banco de CVEs (~minutos vs ~horas sem key).
-      - name: SpotBugs + FindSecBugs + OWASP Dependency Check
-             - name: SpotBugs + FindSecBugs (OWASP Dependency Check pulado)
+      - name: SpotBugs + FindSecBugs (OWASP Dependency Check pulado)
         run: |
           mvn verify -Psecurity -DskipTests -B -Ddependency-check.skip=true
 
