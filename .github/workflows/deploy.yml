@@ -280,6 +280,11 @@ jobs:
     needs: build-and-push    # Só executa se a imagem foi publicada com sucesso
     environment: production
 
+    # Adicionado para permitir o download da imagem privada
+    permissions:
+      contents: read
+      packages: read
+
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
