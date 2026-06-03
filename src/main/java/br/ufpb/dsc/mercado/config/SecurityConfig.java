@@ -118,10 +118,10 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         // URL da página de login customizada (em vez da padrão do Spring Security)
                         .loginPage("/login")
-                        // Após login bem-sucedido, redireciona para /produtos
+                        // Após login bem-sucedido, redireciona para /home
                         // O segundo parâmetro (true) força sempre ir para esta URL,
                         // ignorando a URL que o usuário tentou acessar antes do login
-                        .defaultSuccessUrl("/produtos", true)
+                        .defaultSuccessUrl("/home", true)
                         // A página de login deve ser acessível sem autenticação
                         .permitAll()
                 )
