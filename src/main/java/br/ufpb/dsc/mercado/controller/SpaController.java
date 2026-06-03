@@ -12,6 +12,7 @@ public class SpaController {
 
     @GetMapping(value = {
         "/home",
+        "/main",
         "/login",
         "/favorites",
         "/criar-conta",

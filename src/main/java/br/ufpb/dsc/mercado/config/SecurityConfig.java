@@ -109,7 +109,7 @@ public class SecurityConfig {
                         // /webjars/** → Bootstrap, HTMX (servidos pelo Spring como recursos estáticos)
                         // /css/**, /js/** → arquivos estáticos personalizados
                         // /actuator/health → monitoramento sem autenticação
-                        .requestMatchers("/", "/index.html", "/home", "/favorites", "/criar-conta", "/info/**", "/checkout", "/assets/**", "/webjars/**", "/css/**", "/js/**", "/images/**", "/actuator/health").permitAll()
+                        .requestMatchers("/", "/index.html", "/home", "/main", "/favorites", "/criar-conta", "/info/**", "/checkout", "/assets/**", "/webjars/**", "/css/**", "/js/**", "/images/**", "/actuator/health").permitAll()
                         // Qualquer outra requisição exige autenticação
                         .anyRequest().authenticated()
                 )
@@ -118,10 +118,10 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         // URL da página de login customizada (em vez da padrão do Spring Security)
                         .loginPage("/login")
-                        // Após login bem-sucedido, redireciona para /home
+                        // Após login bem-sucedido, redireciona para /main
                         // O segundo parâmetro (true) força sempre ir para esta URL,
                         // ignorando a URL que o usuário tentou acessar antes do login
-                        .defaultSuccessUrl("/home", true)
+                        .defaultSuccessUrl("/main", true)
                         // A página de login deve ser acessível sem autenticação
                         .permitAll()
                 )

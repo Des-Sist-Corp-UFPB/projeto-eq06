@@ -16,6 +16,7 @@ const RoutesApp = () => {
             <BrowserRouter>
                 <Routes>
                     <Route element={<Navigate to="/login" replace />}   path="/" exact />
+                    <Route element={<Main />}   path="/main" />
                     <Route element={<Home />}   path="/home" />
                     <Route element={<Login />}  path="/login" />
                     <Route element={<Favorites /> }  path="/favorites" />
