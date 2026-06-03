@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class SpaController {
 
     @GetMapping(value = {
-        "/home",
         "/main",
         "/login",
         "/favorites",

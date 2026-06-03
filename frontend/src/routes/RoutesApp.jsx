@@ -1,7 +1,6 @@
 import React from "react";
 import { Route, Routes, BrowserRouter, Navigate } from "react-router-dom";
 
-import Home from "../screens/Home/Home";
 import CriarConta from "../screens/CriarConta/CriarConta";
 import Login from "../screens/Login/Login";
 import Main from "../screens/Main/Main";
@@ -17,7 +16,6 @@ const RoutesApp = () => {
                 <Routes>
                     <Route element={<Navigate to="/login" replace />}   path="/" exact />
                     <Route element={<Main />}   path="/main" />
-                    <Route element={<Home />}   path="/home" />
                     <Route element={<Login />}  path="/login" />
                     <Route element={<Favorites /> }  path="/favorites" />
                     <Route element={<CriarConta />}   path="/criar-conta" />
