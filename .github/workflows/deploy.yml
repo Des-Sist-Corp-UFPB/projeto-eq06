@@ -34,9 +34,12 @@ jobs:
           tags: ${{ env.IMAGE }}
 
       - name: Deploy no servidor
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: dsc.rodrigor.com
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_DEPLOY_KEY }}
-          script: echo "deploy"
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_DEPLOY_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          # Envia "actor:token" ao servidor. A chave é travada (command=),
+          # então o servidor usa esse token efêmero só para puxar a imagem do GHCR.
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            "${{ secrets.SSH_USERNAME }}@dsc.rodrigor.com" \
+            "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}"
