@@ -74,7 +74,7 @@ class ProdutoServiceTest {
         produtoExistente = new Produto("Arroz Integral", "Arroz integral tipo 1", new BigDecimal("8.99"));
         produtoExistente.setId(1L);
 
-        formValido = new ProdutoForm("Feijão Preto", "Feijão preto premium", new BigDecimal("7.50"));
+        formValido = new ProdutoForm("Feijão Preto", "Feijão preto premium", new BigDecimal("7.50"), null);
     }
 
     // =========================================================================
@@ -151,7 +151,7 @@ class ProdutoServiceTest {
         when(produtoRepository.findById(1L)).thenReturn(Optional.of(produtoExistente));
         when(produtoRepository.save(any(Produto.class))).thenReturn(produtoExistente);
 
-        ProdutoForm formAtualizado = new ProdutoForm("Arroz Branco", "Arroz branco tipo 1", new BigDecimal("5.99"));
+        ProdutoForm formAtualizado = new ProdutoForm("Arroz Branco", "Arroz branco tipo 1", new BigDecimal("5.99"), null);
 
         // WHEN
         Produto resultado = produtoService.atualizar(1L, formAtualizado);

@@ -111,7 +111,8 @@ public class ProdutoService {
         Produto produto = new Produto(
                 form.nome(),
                 form.descricao(),
-                form.preco()
+                form.preco(),
+                form.imagem()
         );
         // O método save() do JpaRepository faz o INSERT e retorna a entidade com o ID gerado
         return produtoRepository.save(produto);
@@ -138,6 +139,7 @@ public class ProdutoService {
         produto.setNome(form.nome());
         produto.setDescricao(form.descricao());
         produto.setPreco(form.preco());
+        produto.setImagem(form.imagem());
         // Não precisa chamar save() explicitamente — o JPA (dirty checking) detecta a mudança
         // e executa o UPDATE automaticamente ao final da transação
         return produtoRepository.save(produto);
