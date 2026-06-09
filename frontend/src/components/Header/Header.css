@@ -1,0 +1,92 @@
+@import '../../global.css';
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 5%;
+    background-color: var(--sixth-color);
+    border-bottom: 1px solid var(--seventh-color);
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.pbx-logo{
+    width: 6rem;
+    margin-bottom: -50px;
+    margin-top: -20px;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    background: var(--seventh-color);
+    padding: 8px 15px;
+    border-radius: 5px;
+    width: 40%;
+}
+
+.search-bar input {
+    background: transparent;
+    border: none;
+    color: white;
+    width: 100%;
+    outline: none;
+}
+
+.search-icon {
+    color: var(--text-gray);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: -20px;
+}
+
+.header-icons {
+    display: flex;
+    gap: 15px;
+    font-size: 20px;
+    color: var(--text-gray);
+    padding: 15px;
+    margin-top: 10px;
+}
+
+.logout-button{
+    cursor: 'pointer';
+    margin-left: 10px;
+}
+
+.container-user{
+    display: flex;
+}
+
+.user-info{
+    display: flex;
+    width: 170px;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    font-size: 40px;
+    color: var(--text-gray);
+}
+
+.user-welcome{
+    font-size: 16px;
+    color: var(--text-first-color);
+}
+
+.logout-button{
+    font-size: 20px;
+    color: var(--text-first-color);
+}
