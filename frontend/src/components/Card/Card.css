@@ -4,7 +4,6 @@
     width: 270px;
     height: 400px;
     background-color: var(--fifth-color);
-    margin: 20px;
     border-radius: 15px;
     display: flex;
     flex-direction: column;
@@ -31,9 +30,6 @@
 }
 
 .container-heart {
-    position: absolute;
-    top: 10px;
-    right: 10px;
     background-color: var(--icons-background-first);
     width: 32px;
     height: 32px;
@@ -98,4 +94,37 @@
 .link-details {
     text-decoration: none;
     width: 100%;
+}
+
+.card-actions-top {
+    position: absolute;
+    top: 5%;
+    right: 5%;
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+}
+
+.container-trash {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #ffebee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.container-trash:hover {
+    transform: scale(1.1);
+    background-color: #ef9a9a;
+}
+
+.trash-img {
+    color: #c62828;
+    font-size: 18px;
 }

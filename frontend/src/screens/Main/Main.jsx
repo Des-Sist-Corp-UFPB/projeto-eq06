@@ -1,9 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "./Main.css";
-import { FaFacebookF, FaInstagram, FaTwitter, FaLinkedinIn, FaYoutube } from "react-icons/fa";
+import { FaFacebookF, FaInstagram, FaTwitter, FaLinkedinIn, FaYoutube, FaPlus } from "react-icons/fa";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import pbxLogo from "../../assets/logo/1211 Sem Título_20260220094915.png";
 import Card from "../../components/Card/Card";
 import Header from "../../components/Header/Header";
+import Button from "../../components/Button/Button";
+import ProdutoModal from "../../components/ProdutoModal/ProdutoModal";
+import { AuthContext } from "../../context/AuthContext";
 
 const bannerImages = [
     "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=1200",
@@ -11,28 +16,69 @@ const bannerImages = [
     "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200"
 ];
 
-const productsData = [
-    { id: 1, image: 'https://images.unsplash.com/photo-1671438118097-479e63198629?q=80&w=877&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', title: 'Camisa Polo - Cores', price: 50.00, local: 'Local - PB' },
-    { id: 2, image: 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=400', title: 'Camiseta V - Cores', price: 25.00, local: 'Local - PB' },
-    { id: 3, image: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=400', title: 'Calça Jeans', price: 100.00, local: 'Local - PB' },
-    { id: 4, image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', title: 'Casa - 150m²', price: 4750.00, local: 'Local - PB' },
-    { id: 5, image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400', title: 'Apartamento no centro - 70m²', price: 1999.00, local: 'Local - PB' },
-    { id: 6, image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400', title: 'Casa com piscina - 270m²', price: 7000.00, local: 'Local - PB' },
-];
+// Dados iniciais (podem ser usados enquanto a API não responde ou como placeholder)
+// const productsData = ...
 
 const Main = () => {
+    const { user } = useContext(AuthContext);
+    const isAdmin = user?.email === 'admin';
+
     const [currentBanner, setCurrentBanner] = useState(0);
+    const [productsData, setProductsData] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleDeleteProduct = async (id) => {
+        if (!window.confirm("Tem certeza que deseja excluir este produto?")) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/produtos/${id}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                setProductsData(prev => prev.filter(p => p.id !== id));
+                toast.success("Produto excluído com sucesso!");
+            } else {
+                toast.error("Falha ao excluir o produto.");
+            }
+        } catch (err) {
+            console.error("Erro ao excluir:", err);
+            toast.error("Falha ao comunicar com o servidor.");
+        }
+    };
+
+    const handleProductCreated = (newProduct) => {
+        // Adiciona o produto mais recente no início da lista
+        setProductsData(prev => [newProduct, ...prev]);
+        setIsModalOpen(false);
+    };
 
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrentBanner((prev) => (prev + 1) % bannerImages.length);
         }, 5000);
 
+        // Fetch products from API
+        fetch('/api/produtos')
+            .then(res => res.json())
+            .then(data => {
+                // Se a API retornar paginação, os dados estarão em data.content
+                if (data.content) {
+                    setProductsData(data.content);
+                } else if (Array.isArray(data)) {
+                    setProductsData(data);
+                }
+            })
+            .catch(err => console.error("Erro ao buscar produtos:", err));
+
         return () => clearInterval(timer);
     }, []);
 
     return (
         <div className="pbx-container">
+            <ToastContainer position="top-right" autoClose={3000} />
             <Header />
             <section
                 className="hero"
@@ -58,9 +104,22 @@ const Main = () => {
             </section>
 
             <main className="product-section">
+                <div style={{ margin: '0 40px 20px 40px' }}>
+                    <h2 style={{ color: 'var(--dark-blue)', margin: 0 }}>Catálogo de Produtos</h2>
+                </div>
+                
                 <div className="product-grid">
                     {productsData.map((product) => (
-                        <Card key={product.id} id={product.id} imgBaseUrl={product.image} name={product.title} price={product.price} address={product.local}/>
+                        <Card 
+                            key={product.id} 
+                            id={product.id} 
+                            imgBaseUrl={product.imagem || pbxLogo} 
+                            name={product.title || product.nome} 
+                            price={product.price || product.preco} 
+                            address={product.local || 'Local - PB'}
+                            isAdmin={isAdmin}
+                            onDelete={handleDeleteProduct}
+                        />
                     ))}
                 </div>
             </main>
@@ -100,6 +159,21 @@ const Main = () => {
                     <p className="copyright">Copyright © SAS 2026 |  UFPB PAS Project</p>
                 </div>
             </footer>
+
+            <button 
+                className="fab-add-product" 
+                onClick={() => setIsModalOpen(true)}
+                title="Cadastrar Produto"
+            >
+                <FaPlus />
+            </button>
+
+            {isModalOpen && (
+                <ProdutoModal 
+                    onClose={() => setIsModalOpen(false)} 
+                    onProductCreated={handleProductCreated} 
+                />
+            )}
         </div>
     );
 };
