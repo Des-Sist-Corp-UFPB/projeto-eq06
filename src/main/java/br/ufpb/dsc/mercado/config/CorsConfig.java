@@ -13,9 +13,9 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                // Permitir chamadas do Vite durante o desenvolvimento
+                // Permitir chamadas do Vite durante o desenvolvimento e produção
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5173", "http://127.0.0.1:5173")
+                        .allowedOriginPatterns("*")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT");
             }
         };
