@@ -4,7 +4,7 @@
 > Para Claude Code, veja CLAUDE.md (mais completo).
 
 ## Projeto
-Boilerplate Spring Boot para disciplina universitária. Java 21, Spring Boot 3.4.5, PostgreSQL, React (Vite) + API REST.
+Boilerplate Spring Boot para disciplina universitária. Java 21, Spring Boot 3.4.5, PostgreSQL, Thymeleaf+HTMX+Bootstrap.
 
 ## Pacote base
 `br.ufpb.dsc.mercado`
@@ -12,7 +12,7 @@ Boilerplate Spring Boot para disciplina universitária. Java 21, Spring Boot 3.4
 ## Padrões importantes
 - DTOs são Records Java imutáveis
 - Service layer com `@Transactional`
-- Controllers atuam como APIs REST (`@RestController`) retornando JSON para o frontend em React
+- Controllers retornam fragments Thymeleaf para HTMX
 - Migrations de banco via Flyway em `src/main/resources/db/migration/`
 - Variáveis de ambiente para configuração de produção (`.env`)
 - NUNCA commitar `.env` ou senhas

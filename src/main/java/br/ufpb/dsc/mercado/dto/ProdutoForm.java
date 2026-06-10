@@ -59,13 +59,7 @@ public record ProdutoForm(
         @NotNull(message = "O preço é obrigatório")
         @DecimalMin(value = "0.00", message = "O preço não pode ser negativo")
         @Digits(integer = 8, fraction = 2, message = "Preço deve ter no máximo 8 dígitos inteiros e 2 decimais")
-        BigDecimal preco,
-
-        /**
-         * Campo opcional para a URL da imagem.
-         */
-        @Size(max = 2000, message = "A URL da imagem pode ter no máximo 2000 caracteres")
-        String imagem
+        BigDecimal preco
 
 ) {
 }
