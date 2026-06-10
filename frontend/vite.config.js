@@ -7,17 +7,5 @@ export default defineConfig({
   build: {
     outDir: '../src/main/resources/static',
     emptyOutDir: true,
-  },
-  server: {
-    host: '0.0.0.0',
-    watch: {
-      usePolling: true
-    },
-    proxy: {
-      '/api': {
-        target: 'http://app:8080',
-        changeOrigin: true
-      }
-    }
   }
 })

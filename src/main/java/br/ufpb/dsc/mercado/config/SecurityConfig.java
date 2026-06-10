@@ -109,7 +109,7 @@ public class SecurityConfig {
                         // /webjars/** → Bootstrap, HTMX (servidos pelo Spring como recursos estáticos)
                         // /css/**, /js/** → arquivos estáticos personalizados
                         // /actuator/health → monitoramento sem autenticação
-                        .requestMatchers("/", "/index.html", "/main", "/favorites", "/criar-conta", "/info/**", "/checkout", "/assets/**", "/webjars/**", "/css/**", "/js/**", "/images/**", "/actuator/health", "/ping", "/api/auth/login", "/api/produtos/**").permitAll()
+                        .requestMatchers("/", "/index.html", "/main", "/favorites", "/criar-conta", "/info/**", "/checkout", "/assets/**", "/webjars/**", "/css/**", "/js/**", "/images/**", "/actuator/health", "/ping").permitAll()
                         // Qualquer outra requisição exige autenticação
                         .anyRequest().authenticated()
                 )
@@ -140,7 +140,7 @@ public class SecurityConfig {
                 // Em produção real, considere usar o mecanismo de CSRF com SameSite cookies.
                 .csrf(csrf -> csrf
                         // Desabilita CSRF apenas para os endpoints de produtos e login
-                        .ignoringRequestMatchers("/produtos/**", "/api/produtos/**", "/login", "/api/auth/login")
+                        .ignoringRequestMatchers("/produtos/**", "/login")
                 );
 
         return http.build();
