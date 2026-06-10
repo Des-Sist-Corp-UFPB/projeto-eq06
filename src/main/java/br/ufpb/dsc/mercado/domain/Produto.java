@@ -83,6 +83,14 @@ public class Produto {
     private BigDecimal preco;
 
     /**
+     * URL da imagem do produto.
+     * Pode ter até 2000 caracteres, já que links da web podem ser muito grandes.
+     */
+    @Size(max = 2000, message = "A URL da imagem pode ter no máximo 2000 caracteres")
+    @Column(name = "imagem", length = 2000)
+    private String imagem;
+
+    /**
      * Data e hora de criação do registro.
      *
      * <p>{@code Instant} representa um ponto no tempo em UTC — a melhor prática para armazenar
@@ -150,6 +158,21 @@ public class Produto {
         this.preco = preco;
     }
 
+    /**
+     * Construtor com imagem opcional.
+     *
+     * @param nome      nome do produto
+     * @param descricao descrição opcional
+     * @param preco     preço do produto
+     * @param imagem    URL da imagem opcional
+     */
+    public Produto(String nome, String descricao, BigDecimal preco, String imagem) {
+        this.nome = nome;
+        this.descricao = descricao;
+        this.preco = preco;
+        this.imagem = imagem;
+    }
+
     // =========================================================================
     // GETTERS E SETTERS
     // =========================================================================
@@ -184,6 +207,14 @@ public class Produto {
 
     public void setPreco(BigDecimal preco) {
         this.preco = preco;
+    }
+
+    public String getImagem() {
+        return imagem;
+    }
+
+    public void setImagem(String imagem) {
+        this.imagem = imagem;
     }
 
     public Instant getCriadoEm() {
