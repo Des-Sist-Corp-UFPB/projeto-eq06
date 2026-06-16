@@ -33,8 +33,9 @@ RUN mvn dependency:go-offline -B -q
 # Copiar código-fonte e compilar
 COPY src ./src
 
-# Copiar os arquivos gerados pelo React para a pasta static do Spring Boot
-COPY --from=frontend-builder /frontend/dist ./src/main/resources/static
+# O vite.config.js do projeto está configurado para salvar em ../src/main/resources/static
+# Então o build vai parar na raiz do container do builder, na pasta /src/main/resources/static
+COPY --from=frontend-builder /src/main/resources/static ./src/main/resources/static
 
 RUN mvn clean package -DskipTests -B -q
 
