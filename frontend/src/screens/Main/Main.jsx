@@ -26,19 +26,25 @@ const Main = () => {
     const [currentBanner, setCurrentBanner] = useState(0);
     const [productsData, setProductsData] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [sortBy, setSortBy] = useState("default");
+    const [favorites, setFavorites] = useState(new Set());
 
-    const handleDeleteProduct = async (id) => {
-        if (!window.confirm("Tem certeza que deseja excluir este produto?")) {
-            return;
-        }
+    const [productToDelete, setProductToDelete] = useState(null);
+
+    const promptDeleteProduct = (id) => {
+        setProductToDelete(id);
+    };
+
+    const confirmDeleteProduct = async () => {
+        if (!productToDelete) return;
 
         try {
-            const response = await fetch(`/api/produtos/${id}`, {
+            const response = await fetch(`/api/produtos/${productToDelete}`, {
                 method: 'DELETE'
             });
 
             if (response.ok) {
-                setProductsData(prev => prev.filter(p => p.id !== id));
+                setProductsData(prev => prev.filter(p => p.id !== productToDelete));
                 toast.success("Produto excluído com sucesso!");
             } else {
                 toast.error("Falha ao excluir o produto.");
@@ -46,6 +52,34 @@ const Main = () => {
         } catch (err) {
             console.error("Erro ao excluir:", err);
             toast.error("Falha ao comunicar com o servidor.");
+        } finally {
+            setProductToDelete(null);
+        }
+    };
+
+    const handleToggleFavorite = async (productId, isAdd) => {
+        if (!user || !user.id) {
+            toast.info("Você precisa estar logado para favoritar.");
+            return;
+        }
+
+        try {
+            const method = isAdd ? 'POST' : 'DELETE';
+            const res = await fetch(`/api/usuarios/${user.id}/favoritos/${productId}`, { method });
+            if (res.ok) {
+                setFavorites(prev => {
+                    const newFavs = new Set(prev);
+                    if (isAdd) newFavs.add(productId);
+                    else newFavs.delete(productId);
+                    return newFavs;
+                });
+                toast.success(isAdd ? "Adicionado aos favoritos" : "Removido dos favoritos");
+            } else {
+                toast.error("Não foi possível atualizar o favorito.");
+            }
+        } catch (e) {
+            console.error("Erro ao favoritar", e);
+            toast.error("Erro de comunicação com o servidor.");
         }
     };
 
@@ -64,17 +98,24 @@ const Main = () => {
         fetch('/api/produtos')
             .then(res => res.json())
             .then(data => {
-                // Se a API retornar paginação, os dados estarão em data.content
-                if (data.content) {
-                    setProductsData(data.content);
-                } else if (Array.isArray(data)) {
-                    setProductsData(data);
-                }
+                if (data.content) setProductsData(data.content);
+                else if (Array.isArray(data)) setProductsData(data);
             })
             .catch(err => console.error("Erro ao buscar produtos:", err));
 
+        if (user && user.id) {
+            fetch(`/api/usuarios/${user.id}/favoritos`)
+                .then(res => res.json())
+                .then(data => {
+                    if (Array.isArray(data)) {
+                        setFavorites(new Set(data.map(p => p.id)));
+                    }
+                })
+                .catch(err => console.error("Erro ao buscar favoritos:", err));
+        }
+
         return () => clearInterval(timer);
-    }, []);
+    }, [user]);
 
     return (
         <div className="pbx-container">
@@ -104,12 +145,44 @@ const Main = () => {
             </section>
 
             <main className="product-section">
-                <div style={{ margin: '0 40px 20px 40px' }}>
+                <div className="catalog-header" style={{ margin: '0 40px 20px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
                     <h2 style={{ color: 'var(--dark-blue)', margin: 0 }}>Catálogo de Produtos</h2>
+                    
+                    {productsData.length > 0 && (
+                        <div className="filter-container">
+                            <label htmlFor="sort-filter" style={{ marginRight: '10px', color: 'var(--text-gray)' }}>Ordenar por:</label>
+                            <select 
+                                id="sort-filter" 
+                                value={sortBy} 
+                                onChange={(e) => setSortBy(e.target.value)}
+                                className="sort-select"
+                            >
+                                <option value="default">Recentes</option>
+                                <option value="price-asc">Menor Preço</option>
+                                <option value="price-desc">Maior Preço</option>
+                                <option value="name-asc">Nome (A-Z)</option>
+                                <option value="name-desc">Nome (Z-A)</option>
+                            </select>
+                        </div>
+                    )}
                 </div>
                 
                 <div className="product-grid">
-                    {productsData.map((product) => (
+                    {(() => {
+                        const sortedProducts = [...productsData].sort((a, b) => {
+                            const priceA = a.price || a.preco || 0;
+                            const priceB = b.price || b.preco || 0;
+                            const nameA = a.title || a.nome || "";
+                            const nameB = b.title || b.nome || "";
+                            
+                            if (sortBy === 'price-asc') return priceA - priceB;
+                            if (sortBy === 'price-desc') return priceB - priceA;
+                            if (sortBy === 'name-asc') return nameA.localeCompare(nameB);
+                            if (sortBy === 'name-desc') return nameB.localeCompare(nameA);
+                            return 0; // default (recentes, mantém a ordem original/inserção)
+                        });
+
+                        return sortedProducts.map((product) => (
                         <Card 
                             key={product.id} 
                             id={product.id} 
@@ -118,9 +191,11 @@ const Main = () => {
                             price={product.price || product.preco} 
                             address={product.local || 'Local - PB'}
                             isAdmin={isAdmin}
-                            onDelete={handleDeleteProduct}
+                            onDelete={promptDeleteProduct}
+                            isFavorite={favorites.has(product.id)}
+                            onToggleFavorite={handleToggleFavorite}
                         />
-                    ))}
+                    ))})()}
                 </div>
             </main>
 
@@ -173,6 +248,19 @@ const Main = () => {
                     onClose={() => setIsModalOpen(false)} 
                     onProductCreated={handleProductCreated} 
                 />
+            )}
+
+            {productToDelete && (
+                <div className="custom-modal-overlay">
+                    <div className="custom-modal">
+                        <h3 style={{ marginTop: 0, color: 'var(--accent)' }}>Confirmar Exclusão</h3>
+                        <p style={{ marginBottom: '20px', color: 'var(--text-gray)' }}>Tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita.</p>
+                        <div className="custom-modal-actions">
+                            <button className="btn-cancel" onClick={() => setProductToDelete(null)}>Cancelar</button>
+                            <button className="btn-confirm-delete" onClick={confirmDeleteProduct}>Excluir</button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

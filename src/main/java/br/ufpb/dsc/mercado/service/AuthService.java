@@ -31,6 +31,6 @@ public class AuthService {
             throw new IllegalArgumentException("Credenciais inválidas");
         }
 
-        return new LoginResponse(usuario.getNome(), usuario.getEmail());
+        return new LoginResponse(usuario.getId(), usuario.getNome(), usuario.getEmail());
     }
 }

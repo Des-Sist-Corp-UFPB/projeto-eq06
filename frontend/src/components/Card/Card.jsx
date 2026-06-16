@@ -1,7 +1,7 @@
 import "./Card.css";
 import { Link } from 'react-router-dom';
 import { FiHeart, FiTrash2 } from "react-icons/fi";
-import heartIcon from "../../assets/icons8-gostar-windows-11-outline/icons8-gostar-48.png";
+import { FaHeart } from "react-icons/fa";
 import Button from "../Button/Button";
 
 function Card({ 
@@ -11,7 +11,9 @@ function Card({
     address, 
     imgBaseUrl,
     isAdmin,
-    onDelete
+    onDelete,
+    isFavorite,
+    onToggleFavorite
 }) {
     const formattedPrice = new Intl.NumberFormat('pt-BR', {
         style: 'currency',
@@ -29,8 +31,8 @@ function Card({
                             <FiTrash2 aria-hidden="true" className="trash-img"/>
                         </button>
                     )}
-                    <button className="container-heart" aria-label="Adicionar aos favoritos">
-                        <FiHeart aria-hidden="true" className="heart-img"/>
+                    <button className="container-heart" aria-label="Adicionar aos favoritos" onClick={() => onToggleFavorite && onToggleFavorite(id, !isFavorite)}>
+                        {isFavorite ? <FaHeart color="#ee7b5b" className="heart-img" /> : <FiHeart className="heart-img"/>}
                     </button>
                 </div>
                 <img className="image-product" src={imagePath} alt={`Foto do produto ${name}`} />

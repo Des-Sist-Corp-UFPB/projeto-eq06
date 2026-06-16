@@ -1,66 +1,85 @@
-import React from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import './Favorites.css';
-import { FiSearch, FiHeart, FiShoppingCart, FiUser } from 'react-icons/fi';
-import LogoPBX from '../../assets/logo/1211 Sem Título_20260220094915.png';
+import { FiShoppingCart, FiTrash2 } from 'react-icons/fi';
 import Header from '../../components/Header/Header';
+import { AuthContext } from '../../context/AuthContext';
+import { toast, ToastContainer } from "react-toastify";
 
 const Favorites = () => {
-  const favoritos = [
-    { id: 1, nome: "Camisa Polo - Cores", preco: 50.00, qtd: 2, total: 100.00 },
-    { id: 2, nome: "Camisa Polo - Cores", preco: 50.00, qtd: 2, total: 100.00 },
-    { id: 3, nome: "Camisa Polo - Cores", preco: 50.00, qtd: 2, total: 100.00 },
-    { id: 4, nome: "Camisa Polo - Cores", preco: 50.00, qtd: 2, total: 100.00 },
-  ];
+  const { user } = useContext(AuthContext);
+  const [favoritos, setFavoritos] = useState([]);
+
+  useEffect(() => {
+    if (user && user.id) {
+      fetchFavorites();
+    }
+  }, [user]);
+
+  const fetchFavorites = () => {
+    fetch(`/api/usuarios/${user.id}/favoritos`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setFavoritos(data);
+      })
+      .catch(err => console.error("Erro ao buscar favoritos:", err));
+  };
+
+  const handleRemoveFavorite = async (produtoId) => {
+    try {
+      const res = await fetch(`/api/usuarios/${user.id}/favoritos/${produtoId}`, { method: 'DELETE' });
+      if (res.ok) {
+        setFavoritos(prev => prev.filter(p => p.id !== produtoId));
+        toast.success("Removido dos favoritos");
+      }
+    } catch (e) {
+      toast.error("Erro ao remover favorito");
+    }
+  };
 
   return (
     <div className="fav-container">
+      <ToastContainer position="top-right" autoClose={3000} />
       <Header />
-      {/* HEADER */}
-      {/* <header className="fav-header">
-        <div className="header-limit">
-          <div className="logo-area">
-            <img src={LogoPBX} alt="Logo PBX" />
-          </div>
-          <div className="search-box">
-            <input type="text" placeholder="Buscar produtos, casas..." />
-            <FiSearch className="search-btn-icon" />
-          </div>
-          <div className="nav-icons">
-            <div className="icon-circle active"><FiHeart /></div>
-            <FiShoppingCart className="nav-icon" />
-            <div className="profile-avatar"><FiUser /></div>
-          </div>
-        </div>
-      </header> */}
       <main className="fav-content">
-        <h1 className="main-title">Favoritos</h1>
+        <h1 className="main-title">Meus Favoritos</h1>
 
         <div className="fav-grid">
           <div className="column-labels">
             <span className="label-produtos">Produtos</span>
-            <span className="label-precos">Preços</span>
+            <span className="label-precos">Ações</span>
           </div>
 
           <div className="items-list">
-            {favoritos.map((item) => (
-              <div key={item.id} className="fav-item">
-                <div className="item-info">
-                  <div className="item-image">
-                    <img src="https://images.unsplash.com/photo-1671438118097-479e63198629?q=80&w=877&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt={item.nome} />
-                  </div>
-                  <div className="item-details">
-                    <h3>{item.nome}</h3>
-                    <div className="price-qty">
-                      <span className="unit-price">R$ {item.preco.toFixed(2).replace('.', ',')}</span>
-                      <span className="quantity">x {String(item.qtd).padStart(2, '0')}</span>
+            {favoritos.length === 0 ? (
+              <p style={{ textAlign: 'center', marginTop: '20px', color: '#888' }}>Você ainda não tem nenhum produto favoritado.</p>
+            ) : (
+              favoritos.map((item) => (
+                <div key={item.id} className="fav-item">
+                  <div className="item-info">
+                    <div className="item-image">
+                      <img src={item.imagem || "https://images.unsplash.com/photo-1542291026-7eec264c27ff"} alt={item.title || item.nome} />
+                    </div>
+                    <div className="item-details">
+                      <h3>{item.title || item.nome}</h3>
+                      <div className="price-qty">
+                        <span className="unit-price">
+                          {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.price || item.preco || 0)}
+                        </span>
+                      </div>
                     </div>
                   </div>
+                  <div className="item-total" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '15px' }}>
+                    <button 
+                      onClick={() => handleRemoveFavorite(item.id)} 
+                      style={{ background: 'none', border: 'none', color: '#ee7b5b', cursor: 'pointer', fontSize: '20px' }}
+                      title="Remover dos favoritos"
+                    >
+                      <FiTrash2 />
+                    </button>
+                  </div>
                 </div>
-                <div className="item-total">
-                  <span>R$ {item.total.toFixed(2).replace('.', ',')}</span>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 
