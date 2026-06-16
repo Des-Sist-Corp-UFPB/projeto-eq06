@@ -13,7 +13,15 @@
 #   docker build -f docker/Dockerfile -t mercado:latest .
 # =============================================================================
 
-# ---- Estágio 1: Build -------------------------------------------------------
+# ---- Estágio 1: Build Frontend (React) --------------------------------------
+FROM node:20-alpine AS frontend-builder
+WORKDIR /frontend
+COPY frontend/package*.json ./
+RUN npm install
+COPY frontend/ .
+RUN npm run build
+
+# ---- Estágio 2: Build Backend (Java) ---------------------------------------
 FROM maven:3.9.9-eclipse-temurin-21 AS builder
 
 WORKDIR /build
@@ -24,6 +32,10 @@ RUN mvn dependency:go-offline -B -q
 
 # Copiar código-fonte e compilar
 COPY src ./src
+
+# Copiar os arquivos gerados pelo React para a pasta static do Spring Boot
+COPY --from=frontend-builder /frontend/dist ./src/main/resources/static
+
 RUN mvn clean package -DskipTests -B -q
 
 # ---- Estágio 2: Runtime -----------------------------------------------------
