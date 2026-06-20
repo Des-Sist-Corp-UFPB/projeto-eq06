@@ -31,10 +31,12 @@ const CriarConta = () => {
       password: senha
     };
 
-    handleRegister(novoUsuario);
+    const success = handleRegister(novoUsuario);
     
-    alert("Conta criada com sucesso!");
-    navigate("/login");
+    if (success) {
+      alert("Conta criada com sucesso!");
+      navigate("/login");
+    }
   };
 
   const handleRegister = (newUserData) => {
@@ -42,11 +44,12 @@ const CriarConta = () => {
     
     if(users.find(u => u.email === newUserData.email)) {
         alert("Este email já está cadastrado!");
-        return;
+        return false;
     }
 
     users.push(newUserData);
     localStorage.setItem("users_list", JSON.stringify(users));
+    return true;
   };
 
   return (

@@ -17,7 +17,7 @@ WORKDIR /app
 
 # Copiar apenas o pom.xml primeiro para aproveitar o cache de dependências.
 # Se o pom.xml não mudar, o Docker reutiliza a camada de "mvn dependency:go-offline".
-COPY pom.xml .
+COPY backend/pom.xml .
 RUN mvn dependency:go-offline -B
 
 # O restante do código-fonte é montado via volume no docker-compose.

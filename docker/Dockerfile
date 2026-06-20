@@ -27,11 +27,11 @@ FROM maven:3.9.9-eclipse-temurin-21 AS builder
 WORKDIR /build
 
 # Copiar pom.xml primeiro para cache de dependências
-COPY pom.xml .
+COPY backend/pom.xml .
 RUN mvn dependency:go-offline -B -q
 
 # Copiar código-fonte e compilar
-COPY src ./src
+COPY backend/src ./src
 
 # O vite.config.js do projeto está configurado para salvar em ../src/main/resources/static
 # Então o build vai parar na raiz do container do builder, na pasta /src/main/resources/static

@@ -19,5 +19,23 @@ export default defineConfig({
         changeOrigin: true
       }
     }
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './setupTests.js',
+    coverage: {
+      provider: 'v8',
+      all: true,
+      include: ['src/**/*.jsx'],
+      reporter: ['text', 'json', 'html'],
+      thresholds: {
+        lines: 85,
+        functions: 85,
+        branches: 85,
+        statements: 85
+      }
+    }
   }
 })
+

@@ -56,3 +56,44 @@ docker compose -f docker/docker-compose.dev.yml up --build -d
 - **Frontend**: http://localhost:5173
 - **Backend API**: http://localhost:8080
 - **Banco de Dados (Adminer)**: http://localhost:8888
+
+---
+
+## Como Executar os Testes Automatizados
+
+O projeto foi configurado com a exigência de **85% de cobertura de testes** tanto no Backend quanto no Frontend.
+
+### 1. Backend (Java 21 + Spring Boot)
+Os testes do backend utilizam as seguintes tecnologias:
+- **JUnit 5** e **Mockito** para Testes Unitários das regras de negócio (`Services` e `Controllers`).
+- **Testcontainers** e **@SpringBootTest** para Testes de Integração com banco de dados PostgreSQL real. *(Atenção: O Docker Desktop/Daemon **precisa estar rodando** na sua máquina para os testes de integração passarem).*
+- **JaCoCo** para auditoria de cobertura de código.
+
+Para rodar os testes e verificar a cobertura no backend:
+```bash
+# Na pasta backend do projeto:
+cd backend
+mvn clean verify
+```
+*Se a cobertura ficar abaixo de 85%, a build falhará.*
+
+### 2. Frontend (React + Vite)
+Os testes do frontend utilizam as seguintes tecnologias:
+- **Vitest** como motor de testes (rápido e compatível nativamente com Vite).
+- **React Testing Library (RTL)** para simulação de renderização de componentes e eventos de usuários (como cliques).
+- **@vitest/coverage-v8** para relatórios de cobertura.
+
+Para rodar os testes do frontend:
+```bash
+# Entre na pasta frontend
+cd frontend
+
+# Para instalar as dependências de testes (se for a primeira vez)
+npm install
+
+# Para rodar os testes
+npm run test
+
+# Para rodar os testes exigindo a cobertura de 85%
+npm run coverage
+```
