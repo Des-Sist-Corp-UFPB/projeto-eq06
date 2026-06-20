@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import './Info.css';
 
 import { FiMessageSquare } from 'react-icons/fi';
@@ -8,6 +8,7 @@ import ProductCarousel from '../../components/CarouselProduct/ProductCarousel';
 
 const Info = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -131,7 +132,7 @@ const Info = () => {
               <p>Telefone/WhatsApp: (83) 91234-5678</p>
             </div>
 
-            <button className="btn-chat">
+            <button className="btn-chat" onClick={() => navigate('/chat')}>
               <FiMessageSquare />
               Chat com o vendedor
             </button>
