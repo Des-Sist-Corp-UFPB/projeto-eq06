@@ -21,7 +21,7 @@ const RoutesApp = () => {
                     <Route element={<Favorites /> }  path="/favorites" />
                     <Route element={<CriarConta />}   path="/criar-conta" />
                     <Route element={<Info />}   path="/info/:id" />
-                    <Route element={<Chat />} path="/chat" />
+                    <Route element={<Chat />} path="/chat/:produtoId" />
                     <Route element={<Checkout />} path="/checkout" />
                 </Routes>
             </BrowserRouter>

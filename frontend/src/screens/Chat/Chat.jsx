@@ -1,12 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { FiSend, FiMessageSquare } from 'react-icons/fi';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Header from '../../components/Header/Header';
 import Button from '../../components/Button/Button';
+import { AuthContext } from '../../context/AuthContext';
 import './Chat.css';
 
 const Chat = () => {
   const navigate = useNavigate();
+  const { produtoId } = useParams();
+  const { user } = useContext(AuthContext);
+
+  // Estrutura conceitual da conversa:
+  // {
+  //   produtoId: número,        // ID do produto (da URL)
+  //   compradorId: número,      // ID do usuário logado (user.id)
+  //   vendedorId: número        // ID do vendedor (será obtido do backend futuramente)
+  // }
+  // Esta estrutura permite identificar conversas únicas por produto e usuários envolvidos
+
+  const compradorId = user?.id;
+  const vendedorId = 2; // TODO: Obter do produto quando API fornecer
+
   const [messageInput, setMessageInput] = useState('');
   const [messages, setMessages] = useState([
     {

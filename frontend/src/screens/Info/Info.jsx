@@ -1,18 +1,31 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './Info.css';
 
 import { FiMessageSquare } from 'react-icons/fi';
 import Header from '../../components/Header/Header';
 import ProductCarousel from '../../components/CarouselProduct/ProductCarousel';
+import { AuthContext } from '../../context/AuthContext';
 
 const Info = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [notFound, setNotFound] = useState(false);
+
+  const handleChatClick = () => {
+    if (!user) {
+      toast.info('Faça login para conversar com o vendedor');
+      navigate('/login');
+      return;
+    }
+    navigate(`/chat/${product.id}`);
+  };
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -106,6 +119,7 @@ const Info = () => {
 
   return (
     <div className="info-container">
+      <ToastContainer position="top-right" autoClose={3000} />
       <Header />
 
       <main className="info-content">
@@ -132,7 +146,7 @@ const Info = () => {
               <p>Telefone/WhatsApp: (83) 91234-5678</p>
             </div>
 
-            <button className="btn-chat" onClick={() => navigate('/chat')}>
+            <button className="btn-chat" onClick={handleChatClick}>
               <FiMessageSquare />
               Chat com o vendedor
             </button>
