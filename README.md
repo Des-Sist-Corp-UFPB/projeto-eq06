@@ -39,6 +39,12 @@ A implementação foi feita utilizando o paradigma **AOP (Programação Orientad
 3. **Coleta de Dados**: O Aspecto extrai dados importantes do contexto em tempo real: qual usuário está logado (pelo Spring Security), o IP da requisição, a classe, o método executado e o payload (argumentos) passados.
 4. **Armazenamento**: Esses dados são serializados e salvos na tabela dedicada `audit_log` (gerenciada por uma migração automática do Flyway).
 
+### Acesso ao Painel de Auditoria
+A aplicação fornece uma interface dedicada para administradores visualizarem o histórico de auditoria:
+1. Logue na plataforma utilizando a aba **Administrador** (Email: `admin`, Senha: `admin123`).
+2. No menu superior (cabeçalho), clique no **Ícone de Escudo** (`FiShield`).
+3. Você será redirecionado ao Painel de Auditoria (`/auditoria`), onde os logs são apresentados em tempo real (paginados), destacando com cores os sucessos e falhas, além de revelar detalhes como horário, usuário e endereço de IP da requisição.
+
 ---
 
 ## Tecnologias Utilizadas
