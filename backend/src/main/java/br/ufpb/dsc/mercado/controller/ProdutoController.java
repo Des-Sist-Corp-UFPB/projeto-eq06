@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import br.ufpb.dsc.mercado.aspect.AuditAction;
 
 /**
  * REST Controller para operações de produtos.
@@ -44,12 +45,14 @@ public class ProdutoController {
     }
 
     @PostMapping
+    @AuditAction("CRIAR_PRODUTO")
     public ResponseEntity<Produto> criar(@Valid @RequestBody ProdutoForm form) {
         Produto novoProduto = produtoService.criar(form);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoProduto);
     }
 
     @PutMapping("/{id}")
+    @AuditAction("ATUALIZAR_PRODUTO")
     public ResponseEntity<Produto> atualizar(
             @PathVariable Long id,
             @Valid @RequestBody ProdutoForm form) {
@@ -59,6 +62,7 @@ public class ProdutoController {
     }
 
     @DeleteMapping("/{id}")
+    @AuditAction("EXCLUIR_PRODUTO")
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
         produtoService.excluir(id);
         return ResponseEntity.noContent().build();

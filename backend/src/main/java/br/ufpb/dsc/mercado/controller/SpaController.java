@@ -16,7 +16,8 @@ public class SpaController {
         "/favorites",
         "/criar-conta",
         "/info/{id}",
-        "/checkout"
+        "/checkout",
+        "/auditoria"
     })
     public String forward() {
         // Encaminha internamente para o index.html gerado pelo React

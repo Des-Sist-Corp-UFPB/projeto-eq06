@@ -88,6 +88,12 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
+        <!-- === AOP (AUDITORIA) === -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
         <!-- === FRONTEND: Bootstrap + HTMX via WebJars === -->
         <dependency>
             <groupId>org.webjars</groupId>

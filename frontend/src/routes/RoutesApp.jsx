@@ -9,6 +9,7 @@ import { AuthProvider } from "../context/AuthContext";
 import Info from "../screens/Info/Info";
 import Checkout from "../screens/Checkout/Checkout";
 import Chat from "../screens/Chat/Chat";
+import Audit from "../screens/Audit/Audit";
 
 const RoutesApp = () => {
    return(
@@ -23,6 +24,7 @@ const RoutesApp = () => {
                     <Route element={<Info />}   path="/info/:id" />
                     <Route element={<Chat />} path="/chat/:produtoId" />
                     <Route element={<Checkout />} path="/checkout" />
+                    <Route element={<Audit />} path="/auditoria" />
                 </Routes>
             </BrowserRouter>
         </AuthProvider>

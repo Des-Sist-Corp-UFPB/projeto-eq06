@@ -40,7 +40,8 @@ const Main = () => {
 
         try {
             const response = await fetch(`/api/produtos/${productToDelete}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: { 'X-User-Email': user?.email || 'anonymous' }
             });
 
             if (response.ok) {
@@ -65,7 +66,10 @@ const Main = () => {
 
         try {
             const method = isAdd ? 'POST' : 'DELETE';
-            const res = await fetch(`/api/usuarios/${user.id}/favoritos/${productId}`, { method });
+            const res = await fetch(`/api/usuarios/${user.id}/favoritos/${productId}`, { 
+                method,
+                headers: { 'X-User-Email': user?.email || 'anonymous' }
+            });
             if (res.ok) {
                 setFavorites(prev => {
                     const newFavs = new Set(prev);

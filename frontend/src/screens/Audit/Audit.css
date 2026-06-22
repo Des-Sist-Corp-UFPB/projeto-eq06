@@ -1,0 +1,81 @@
+.audit-page {
+    min-height: 100vh;
+    background-color: #f5f6fa;
+}
+
+.audit-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.audit-container h2 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.audit-container p {
+    color: #7f8c8d;
+    margin-bottom: 2rem;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.audit-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.audit-table th, .audit-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e1e8ed;
+}
+
+.audit-table th {
+    background-color: #f8f9fa;
+    color: #34495e;
+    font-weight: 600;
+}
+
+.audit-table tr:hover {
+    background-color: #f1f4f6;
+}
+
+.details-cell {
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: #555;
+    cursor: help;
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.success {
+    background-color: #e3fcec;
+    color: #2ecc71;
+}
+
+.failure {
+    background-color: #fce3e3;
+    color: #e74c3c;
+}
+
+.text-center {
+    text-align: center;
+}

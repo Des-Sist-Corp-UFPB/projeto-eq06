@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import br.ufpb.dsc.mercado.aspect.AuditAction;
 
 @RestController
 @RequestMapping("/api/usuarios/{usuarioId}/favoritos")
@@ -35,6 +36,7 @@ public class FavoritoController {
     }
 
     @PostMapping("/{produtoId}")
+    @AuditAction("ADD_FAVORITO")
     public ResponseEntity<?> adicionarFavorito(@PathVariable Long usuarioId, @PathVariable Long produtoId) {
         if (favoritoRepository.existsByUsuarioIdAndProdutoId(usuarioId, produtoId)) {
             return ResponseEntity.badRequest().body("Produto já favoritado");
@@ -51,6 +53,7 @@ public class FavoritoController {
 
     @DeleteMapping("/{produtoId}")
     @Transactional
+    @AuditAction("REMOVE_FAVORITO")
     public ResponseEntity<?> removerFavorito(@PathVariable Long usuarioId, @PathVariable Long produtoId) {
         favoritoRepository.deleteByUsuarioIdAndProdutoId(usuarioId, produtoId);
         return ResponseEntity.ok().build();

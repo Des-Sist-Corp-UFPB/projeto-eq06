@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { toast } from "react-toastify";
+import { AuthContext } from "../../context/AuthContext";
 import Button from "../Button/Button";
 import "./ProdutoModal.css";
 
@@ -9,6 +10,7 @@ export default function ProdutoModal({ onClose, onProductCreated }) {
   const [preco, setPreco] = useState("");
   const [imagem, setImagem] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,7 +25,10 @@ export default function ProdutoModal({ onClose, onProductCreated }) {
     try {
       const response = await fetch('/api/produtos', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            'Content-Type': 'application/json',
+            'X-User-Email': user?.email || 'anonymous'
+        },
         body: JSON.stringify({
           nome: nome,
           descricao: descricao,

@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import br.ufpb.dsc.mercado.aspect.AuditAction;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -19,6 +20,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @AuditAction("USER_LOGIN")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         try {
             LoginResponse response = authService.autenticar(request);

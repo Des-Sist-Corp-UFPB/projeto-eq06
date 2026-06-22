@@ -22,6 +22,25 @@ Até o momento, o sistema conta com as seguintes funcionalidades:
 
 ---
 
+## Sistema de Auditoria (Audit Logs)
+
+O sistema conta com uma infraestrutura de auditoria transparente para rastrear as ações dos usuários, garantindo um histórico de atividades seguro sem acoplar regras de auditoria diretamente nas lógicas de negócio.
+
+### O que é auditado?
+O sistema intercepta e grava automaticamente eventos de **Sucesso** ou **Falha** nas seguintes ações:
+- **Autenticação**: Tentativas de acesso ao sistema (`USER_LOGIN`).
+- **Gerenciamento de Produtos**: Criação (`CRIAR_PRODUTO`), atualização (`ATUALIZAR_PRODUTO`) e remoção de produtos (`EXCLUIR_PRODUTO`).
+- **Ações de Usuário**: Inclusão (`ADD_FAVORITO`) e exclusão (`REMOVE_FAVORITO`) de produtos na lista de favoritos.
+
+### Como funciona sob o capô?
+A implementação foi feita utilizando o paradigma **AOP (Programação Orientada a Aspectos)** integrado ao Spring Boot:
+1. **Anotação `@AuditAction`**: Marcamos os endpoints REST (nos Controllers) que desejamos rastrear.
+2. **Interceptação (Aspecto)**: O `AuditAspect` "ouve" (intercepta) essas chamadas. Após a execução do método (seja sucesso ou exceção), ele entra em ação.
+3. **Coleta de Dados**: O Aspecto extrai dados importantes do contexto em tempo real: qual usuário está logado (pelo Spring Security), o IP da requisição, a classe, o método executado e o payload (argumentos) passados.
+4. **Armazenamento**: Esses dados são serializados e salvos na tabela dedicada `audit_log` (gerenciada por uma migração automática do Flyway).
+
+---
+
 ## Tecnologias Utilizadas
 
 | Camada | Tecnologia |
@@ -33,6 +52,7 @@ Até o momento, o sistema conta com as seguintes funcionalidades:
 | Banco de Dados | PostgreSQL 16 |
 | Migrações | Flyway 11 |
 | Segurança | Spring Security 6 |
+| Auditoria | Spring AOP + AspectJ |
 | Build e Gerenciamento | Maven 3.9 (Back) / npm (Front) |
 | Containerização | Docker + Docker Compose |
 | CI/CD e Segurança | GitHub Actions + Trivy + OWASP Dependency Check |
