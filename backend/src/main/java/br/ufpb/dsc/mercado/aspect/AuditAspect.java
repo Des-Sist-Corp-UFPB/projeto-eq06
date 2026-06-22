@@ -28,7 +28,13 @@ public class AuditAspect {
 
     @AfterReturning(pointcut = "@annotation(auditAction)", returning = "result")
     public void logSuccessAction(JoinPoint joinPoint, AuditAction auditAction, Object result) {
-        saveLog(joinPoint, auditAction.value() + "_SUCCESS", result != null ? result.toString() : "null");
+        String suffix = "_SUCCESS";
+        if (result instanceof org.springframework.http.ResponseEntity<?> responseEntity) {
+            if (responseEntity.getStatusCode().is4xxClientError() || responseEntity.getStatusCode().is5xxServerError()) {
+                suffix = "_FAILURE";
+            }
+        }
+        saveLog(joinPoint, auditAction.value() + suffix, result != null ? result.toString() : "null");
     }
 
     @AfterThrowing(pointcut = "@annotation(auditAction)", throwing = "exception")
