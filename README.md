@@ -19,6 +19,7 @@ Até o momento, o sistema conta com as seguintes funcionalidades:
 - **Recursos Exclusivos de Administrador**:
   - Botão Flutuante (FAB) para cadastrar novos produtos rapidamente através de um Modal interativo.
   - Botão de exclusão diretamente nos cards de produtos (com diálogo de confirmação).
+  - **Chatbot Gerencial IA**: Um assistente virtual inteligente integrado ao **Google Gemini 3.1 Flash Lite**, restrito a administradores. Ele utiliza injeção dinâmica de contexto do banco de dados (Data-Augmented Prompting) para responder sobre estoque e produtos em tempo real. Possui regras estritas de segurança (Guardrails NLP) para prevenir ataques de *Prompt Injection* e bloquear sumariamente assuntos fora do escopo corporativo do PBX.
 
 ---
 
@@ -55,6 +56,7 @@ A aplicação fornece uma interface dedicada para administradores visualizarem o
 | Frontend | React 18 + Vite |
 | Roteamento | React Router DOM v7 |
 | Estilização | Vanilla CSS |
+| Inteligência Artificial | Google Gemini API (gemini-3.1-flash-lite) + Prompt Guardrails |
 | Banco de Dados | PostgreSQL 16 |
 | Migrações | Flyway 11 |
 | Segurança | Spring Security 6 |
