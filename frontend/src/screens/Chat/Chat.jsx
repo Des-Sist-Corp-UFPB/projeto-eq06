@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect  } from 'react';
 import { FiSend, FiMessageSquare } from 'react-icons/fi';
 import { useNavigate, useParams } from 'react-router-dom';
 import Header from '../../components/Header/Header';
@@ -47,26 +47,78 @@ const Chat = () => {
     },
   ]);
 
-  const handleSubmit = (event) => {
+  useEffect(() => {
+    if (!user?.id) return;
+
+    fetch(
+      `/api/mensagens/produto/${produtoId}?userId=${user.id}`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        const formatadas = (data || []).map((msg) => ({
+          id: msg.id,
+          sender: Number(msg.remetenteId) === Number(user.id) ? "Você" : "Vendedor",
+          text: msg.texto,
+          time: new Date(msg.enviadaEm).toLocaleTimeString("pt-BR", {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          type: Number(msg.remetenteId) === Number(user.id) ? "outgoing" : "incoming",
+        }));
+        console.log("USER ID:", user.id);
+
+        (data || []).forEach(msg => {
+          console.log(
+            "Mensagem:",
+            msg.id,
+            "Remetente:",
+            msg.remetenteId,
+            "Tipo:",
+            typeof msg.remetenteId
+          );
+        });
+
+        console.log("Tipo user.id:", typeof user.id);
+        setMessages(formatadas);
+      });
+  }, [produtoId, user?.id]);
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
+
     const trimmedMessage = messageInput.trim();
-    if (!trimmedMessage) {
-      return;
-    }
+    if (!trimmedMessage || !user?.id) return;
 
     const newMessage = {
       id: Date.now(),
-      sender: 'Você',
+      sender: "Você",
       text: trimmedMessage,
-      time: new Date().toLocaleTimeString('pt-BR', {
-        hour: '2-digit',
-        minute: '2-digit',
+      time: new Date().toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
       }),
-      type: 'outgoing',
+      type: "outgoing",
     };
 
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
-    setMessageInput('');
+    setMessages((prev) => [...prev, newMessage]);
+    setMessageInput("");
+
+    try {
+      await fetch("/api/mensagens", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          produtoId: Number(produtoId),
+          remetenteId: user.id,
+          texto: trimmedMessage,
+        }),
+      });
+    } catch (err) {
+      console.error(err);
+      setMessages((prev) => prev.slice(0, -1));
+    }
   };
 
   return (
