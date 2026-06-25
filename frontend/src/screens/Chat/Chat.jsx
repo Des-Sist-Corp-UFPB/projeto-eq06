@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect  } from 'react';
+import axios from 'axios'; 
 import { FiSend, FiMessageSquare } from 'react-icons/fi';
 import { useNavigate, useParams } from 'react-router-dom';
 import Header from '../../components/Header/Header';
@@ -26,24 +27,24 @@ const Chat = () => {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      sender: 'Vendedor',
+      sender: 'Você',
       text: 'Olá! Esse produto ainda está disponível?',
       time: '09:03',
-      type: 'incoming',
-    },
-    {
-      id: 2,
-      sender: 'Você',
-      text: 'Sim, está disponível. Quer agendar uma visita?',
-      time: '09:06',
       type: 'outgoing',
     },
     {
-      id: 3,
+      id: 2,
       sender: 'Vendedor',
+      text: 'Sim, está disponível. Quer agendar uma visita?',
+      time: '09:06',
+      type: 'incoming',
+    },
+    {
+      id: 3,
+      sender: 'Você',
       text: 'Perfeito, podemos marcar para amanhã.',
       time: '09:08',
-      type: 'incoming',
+      type: 'outgoing',
     },
   ]);
 
@@ -65,20 +66,6 @@ const Chat = () => {
           }),
           type: Number(msg.remetenteId) === Number(user.id) ? "outgoing" : "incoming",
         }));
-        console.log("USER ID:", user.id);
-
-        (data || []).forEach(msg => {
-          console.log(
-            "Mensagem:",
-            msg.id,
-            "Remetente:",
-            msg.remetenteId,
-            "Tipo:",
-            typeof msg.remetenteId
-          );
-        });
-
-        console.log("Tipo user.id:", typeof user.id);
         setMessages(formatadas);
       });
   }, [produtoId, user?.id]);
@@ -117,10 +104,72 @@ const Chat = () => {
       });
     } catch (err) {
       console.error(err);
+
+      // Remove a mensagem adicionada localmente se o envio falhar
       setMessages((prev) => prev.slice(0, -1));
     }
   };
 
+  const perguntarIA = async (event) => {
+    event.preventDefault();
+
+    const trimmedMessage = messageInput.trim();
+    if (!trimmedMessage || !user?.id) return;
+
+    const mensagemUsuario = {
+      id: Date.now(),
+      sender: "Você",
+      text: trimmedMessage,
+      time: new Date().toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      type: "outgoing",
+    };
+
+    // Mostra a mensagem do usuário imediatamente
+    setMessages((prev) => [...prev, mensagemUsuario]);
+    setMessageInput("");
+
+    try {
+      const respostaIA = await axios.post(
+        "/api/chat/ia",
+        {
+          mensagem: trimmedMessage,
+        }
+      );
+
+      const mensagemIA = {
+        id: Date.now() + 1,
+        sender: "Assistente IA",
+        text: respostaIA.data,
+        time: new Date().toLocaleTimeString("pt-BR", {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        type: "incoming",
+      };
+
+      setMessages((prev) => [...prev, mensagemIA]);
+
+    } catch (erro) {
+      console.error(erro);
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          sender: "Assistente IA",
+          text: "Desculpe, não consegui responder agora.",
+          time: new Date().toLocaleTimeString("pt-BR", {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          type: "incoming",
+        },
+      ]);
+    }
+  };
   return (
     <div className="chat-page">
       <Header />
@@ -171,7 +220,20 @@ const Chat = () => {
                 value={messageInput}
                 onChange={(event) => setMessageInput(event.target.value)}
               />
-              <Button typeBtn="submit" btnText="Enviar" variant="Orange" />
+
+              <Button
+                typeBtn="button"
+                btnText="Perguntar IA"
+                variant="Orange"
+                onClick={perguntarIA}
+              />
+
+              <Button
+                typeBtn="submit"
+                btnText="Enviar"
+                variant="Orange"
+              />
+
             </form>
           </div>
         </section>
