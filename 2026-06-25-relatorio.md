@@ -6,7 +6,7 @@
 | **Repositório** | https://github.com/des-sist-corp-ufpb/projeto-eq06 |
 | **Aplicação** | https://eq06.dsc.rodrigor.com |
 | **Período de atividade** | 2026-06-22 → 2026-06-25 |
-| **Total de commits** (sem merges) | 5 |
+| **Total de commits** (sem merges, branch main) | 8 |
 | **Integrantes** | Samuel Cesar Dantas Mota (@samuelcsar), Sabrina Goncalves De Almeida (@sabrina-goncalves-de-almeida) |
 
 ---
@@ -22,10 +22,11 @@
 
 ## 2. Análise Funcional
 
-### Endpoints REST (15 mapeados)
+### Endpoints REST (16 mapeados)
 
 | Método | Path | Arquivo |
 |--------|------|---------|
+| `POST` | `/api/admin/chat` | `AdminChatController.java` |
 | `GET` | `/api/auditoria` | `AuditLogController.java` |
 | `POST` | `/api/auth/login` | `AuthController.java` |
 | `POST` | `/api/chat/ia` | `ChatIAController.java` |
@@ -87,18 +88,24 @@
 
 ### Resumo
 
-| Usuário | Commits | % commits | Linhas adicionadas | Linhas no código atual | % código atual |
-|---------|---------|-----------|-------------------|----------------------|----------------|
-| Samuel Cesar Dantas Mota (@samuelcsar) | 1 | 20% | 24.045 | 13.910 | 98% |
-| Sabrina Goncalves De Almeida (@sabrina-goncalves-de-almeida) | 4 | 80% | 1.429 | 305 | 2% |
+| Usuário | Commits (main) | Commits (GitHub API) | Linhas adicionadas | Linhas no código atual | % código atual |
+|---------|---------------|---------------------|-------------------|----------------------|----------------|
+| Samuel Cesar Dantas Mota (@samuelcsar) | 3 | **28** ⚠️ | 24.485 | 14.166 | 98% |
+| Sabrina Goncalves De Almeida (@sabrina-goncalves-de-almeida) | 4 | **17** ⚠️ | 1.429 | 305 | 2% |
+| *(sem login GitHub)* | 1 | 12% | — | — | — |
+
+> **⚠️ Divergência entre commits locais e GitHub API:**
+> - **@samuelcsar**: 3 commit(s) na branch `main` vs **28** registrados na API GitHub (commits em branches não mergeadas ou absorvidos via squash-merge sem preservação de autoria).
+> - **@sabrina-goncalves-de-almeida**: 4 commit(s) na branch `main` vs **17** registrados na API GitHub (commits em branches não mergeadas ou absorvidos via squash-merge sem preservação de autoria).
+>
 
 ### Contribuição por Camada
 
 | Camada | Total linhas | Samuel Cesar Dantas Mota (@samuelcsar) | Sabrina Goncalves De Almeida (@sabrina-goncalves-de-almeida) |
 |--------|-------------|---------|---------|
-| Controller | 3.018 | 97% | 3% |
-| Frontend | 8.855 | 100% | 0% |
-| Repository | 114 | 88% | 12% |
+| Controller | 3.129 | 97% | 3% |
+| Frontend | 8.997 | 100% | 0% |
+| Repository | 117 | 88% | 12% |
 | Service | 714 | 88% | 12% |
 | Test | 91 | 100% | 0% |
 
@@ -120,6 +127,7 @@ Baseado em `git blame` nos arquivos de controller e service.
 | `index.html` | 130 | 100% | 0% |
 | `lista.html` | 122 | 100% | 0% |
 | `linha.html` | 113 | 100% | 0% |
+| `AdminChatController.java` | 111 | 100% | 0% |
 | `ProdutoControllerTest.java` | 108 | 100% | 0% |
 | `tabela.html` | 107 | 100% | 0% |
 | `FavoritoControllerTest.java` | 102 | 100% | 0% |
