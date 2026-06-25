@@ -65,4 +65,7 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
      * @return página de produtos que correspondem ao critério de busca
      */
     Page<Produto> findByNomeContainingIgnoreCase(String nome, Pageable pageable);
+
+    @org.springframework.data.jpa.repository.Query("SELECT SUM(p.preco) FROM Produto p")
+    java.math.BigDecimal calcularValorTotalEstoque();
 }
