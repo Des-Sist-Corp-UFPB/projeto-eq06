@@ -6,7 +6,7 @@
 | **Repositório** | https://github.com/des-sist-corp-ufpb/projeto-eq06 |
 | **Aplicação** | https://eq06.dsc.rodrigor.com |
 | **Período de atividade** | 2026-06-22 → 2026-06-25 |
-| **Total de commits** (sem merges, branch main) | 8 |
+| **Total de commits** (sem merges, branch main) | 9 |
 | **Integrantes** | Samuel Cesar Dantas Mota (@samuelcsar), Sabrina Goncalves De Almeida (@sabrina-goncalves-de-almeida) |
 
 ---
@@ -72,7 +72,7 @@
 | Aspecto | Status | Observação |
 |---------|--------|-----------|
 | Arquitetura em camadas | ✅ | controller=✅  service=✅  repository=✅ |
-| Testes automatizados | ❌ | 0 arquivo(s) de teste |
+| Testes automatizados | ✅ | 11 Java, 0 JS/TS, 0 Python |
 | Migrations versionadas | ✅ | 6 migration(s) |
 | Logging | ❌ | não detectado |
 | Autenticação / Segurança | ✅ | Spring Security / JWT / decorator detectado |
@@ -92,7 +92,7 @@
 |---------|---------------|---------------------|-------------------|----------------------|----------------|
 | Samuel Cesar Dantas Mota (@samuelcsar) | 3 | **28** ⚠️ | 24.485 | 14.166 | 98% |
 | Sabrina Goncalves De Almeida (@sabrina-goncalves-de-almeida) | 4 | **17** ⚠️ | 1.429 | 305 | 2% |
-| *(sem login GitHub)* | 1 | 12% | — | — | — |
+| *(sem login GitHub)* | 2 | 22% | — | — | — |
 
 > **⚠️ Divergência entre commits locais e GitHub API:**
 > - **@samuelcsar**: 3 commit(s) na branch `main` vs **28** registrados na API GitHub (commits em branches não mergeadas ou absorvidos via squash-merge sem preservação de autoria).
