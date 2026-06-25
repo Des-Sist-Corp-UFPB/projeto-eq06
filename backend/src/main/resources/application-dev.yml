@@ -23,7 +23,3 @@ logging:
   level:
     br.ufpb.dsc.mercado: DEBUG
     org.springframework.web: DEBUG
-
-gemini:
-  api:
-    key: ${GEMINI_API_KEY}

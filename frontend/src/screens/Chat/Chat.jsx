@@ -1,5 +1,4 @@
-import React, { useState, useContext, useEffect  } from 'react';
-import axios from 'axios'; 
+import React, { useState, useContext } from 'react';
 import { FiSend, FiMessageSquare } from 'react-icons/fi';
 import { useNavigate, useParams } from 'react-router-dom';
 import Header from '../../components/Header/Header';
@@ -27,149 +26,49 @@ const Chat = () => {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      sender: 'Você',
+      sender: 'Vendedor',
       text: 'Olá! Esse produto ainda está disponível?',
       time: '09:03',
-      type: 'outgoing',
-    },
-    {
-      id: 2,
-      sender: 'Vendedor',
-      text: 'Sim, está disponível. Quer agendar uma visita?',
-      time: '09:06',
       type: 'incoming',
     },
     {
-      id: 3,
+      id: 2,
       sender: 'Você',
+      text: 'Sim, está disponível. Quer agendar uma visita?',
+      time: '09:06',
+      type: 'outgoing',
+    },
+    {
+      id: 3,
+      sender: 'Vendedor',
       text: 'Perfeito, podemos marcar para amanhã.',
       time: '09:08',
-      type: 'outgoing',
+      type: 'incoming',
     },
   ]);
 
-  useEffect(() => {
-    if (!user?.id) return;
-
-    fetch(
-      `/api/mensagens/produto/${produtoId}?userId=${user.id}`
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        const formatadas = (data || []).map((msg) => ({
-          id: msg.id,
-          sender: Number(msg.remetenteId) === Number(user.id) ? "Você" : "Vendedor",
-          text: msg.texto,
-          time: new Date(msg.enviadaEm).toLocaleTimeString("pt-BR", {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-          type: Number(msg.remetenteId) === Number(user.id) ? "outgoing" : "incoming",
-        }));
-        setMessages(formatadas);
-      });
-  }, [produtoId, user?.id]);
-
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
-
     const trimmedMessage = messageInput.trim();
-    if (!trimmedMessage || !user?.id) return;
+    if (!trimmedMessage) {
+      return;
+    }
 
     const newMessage = {
       id: Date.now(),
-      sender: "Você",
+      sender: 'Você',
       text: trimmedMessage,
-      time: new Date().toLocaleTimeString("pt-BR", {
-        hour: "2-digit",
-        minute: "2-digit",
+      time: new Date().toLocaleTimeString('pt-BR', {
+        hour: '2-digit',
+        minute: '2-digit',
       }),
-      type: "outgoing",
+      type: 'outgoing',
     };
 
-    setMessages((prev) => [...prev, newMessage]);
-    setMessageInput("");
-
-    try {
-      await fetch("/api/mensagens", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          produtoId: Number(produtoId),
-          remetenteId: user.id,
-          texto: trimmedMessage,
-        }),
-      });
-    } catch (err) {
-      console.error(err);
-
-      // Remove a mensagem adicionada localmente se o envio falhar
-      setMessages((prev) => prev.slice(0, -1));
-    }
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
+    setMessageInput('');
   };
 
-  const perguntarIA = async (event) => {
-    event.preventDefault();
-
-    const trimmedMessage = messageInput.trim();
-    if (!trimmedMessage || !user?.id) return;
-
-    const mensagemUsuario = {
-      id: Date.now(),
-      sender: "Você",
-      text: trimmedMessage,
-      time: new Date().toLocaleTimeString("pt-BR", {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      type: "outgoing",
-    };
-
-    // Mostra a mensagem do usuário imediatamente
-    setMessages((prev) => [...prev, mensagemUsuario]);
-    setMessageInput("");
-
-    try {
-      const respostaIA = await axios.post(
-        "/api/chat/ia",
-        {
-          mensagem: trimmedMessage,
-        }
-      );
-
-      const mensagemIA = {
-        id: Date.now() + 1,
-        sender: "Assistente IA",
-        text: respostaIA.data,
-        time: new Date().toLocaleTimeString("pt-BR", {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        type: "incoming",
-      };
-
-      setMessages((prev) => [...prev, mensagemIA]);
-
-    } catch (erro) {
-      console.error(erro);
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now() + 1,
-          sender: "Assistente IA",
-          text: "Desculpe, não consegui responder agora.",
-          time: new Date().toLocaleTimeString("pt-BR", {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-          type: "incoming",
-        },
-      ]);
-    }
-  };
   return (
     <div className="chat-page">
       <Header />
@@ -220,20 +119,7 @@ const Chat = () => {
                 value={messageInput}
                 onChange={(event) => setMessageInput(event.target.value)}
               />
-
-              <Button
-                typeBtn="button"
-                btnText="Perguntar IA"
-                variant="Orange"
-                onClick={perguntarIA}
-              />
-
-              <Button
-                typeBtn="submit"
-                btnText="Enviar"
-                variant="Orange"
-              />
-
+              <Button typeBtn="submit" btnText="Enviar" variant="Orange" />
             </form>
           </div>
         </section>
