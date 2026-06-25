@@ -154,8 +154,9 @@
 
 .chat-form {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr auto auto;
   gap: 12px;
+  align-items: center;
 }
 
 .chat-form input {

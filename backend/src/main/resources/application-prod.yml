@@ -16,3 +16,7 @@ logging:
   level:
     root: WARN
     br.ufpb.dsc.mercado: INFO
+
+gemini:
+  api:
+    key: ${GEMINI_API_KEY}
