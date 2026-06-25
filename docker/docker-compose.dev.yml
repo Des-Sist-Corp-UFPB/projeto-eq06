@@ -52,7 +52,6 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mercado_dev
       SPRING_DATASOURCE_USERNAME: mercado
       SPRING_DATASOURCE_PASSWORD: mercado123
-      GEMINI_API_KEY: ${GEMINI_API_KEY}
     ports:
       - "8080:8080"
     volumes:
