@@ -4,6 +4,12 @@ spring:
   profiles:
     active: dev
 
+# Chave de API do Gemini (Carregada da variável de ambiente GEMINI_API_KEY)
+# Deixe vazio ou 'sua_chave_aqui' se ainda não tiver uma configurada
+gemini:
+  api:
+    key: ${GEMINI_API_KEY:AQ.Ab8RN6LCOffQnGPY7GfhvlJg-U72Xjag-NjyrOBfxRWaTnyJEA}
+
 # Actuator - monitoramento da aplicação
 # Acesse: http://localhost:8080/actuator/health
 management:

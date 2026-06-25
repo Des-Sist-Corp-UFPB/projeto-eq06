@@ -1,6 +1,6 @@
 import { useContext } from 'react'; // Importe o useContext
 import { Link, useNavigate } from 'react-router-dom';
-import { FiSearch, FiHeart, FiShoppingCart, FiLogOut, FiShield } from "react-icons/fi";
+import { FiSearch, FiHeart, FiShoppingCart, FiLogOut, FiShield, FiMessageSquare } from "react-icons/fi";
 import { FaCircleUser } from 'react-icons/fa6';
 import { AuthContext } from "../../context/AuthContext";
 import Button from "../../components/Button/Button";
@@ -55,9 +55,14 @@ function Header() {
                                 <FiShoppingCart />
                             </Link>
                             {user.email === 'admin' && (
-                                <Link to="/auditoria" title="Painel de Auditoria">
-                                    <FiShield />
-                                </Link>
+                                <>
+                                    <Link to="/auditoria" title="Painel de Auditoria">
+                                        <FiShield />
+                                    </Link>
+                                    <Link to="/admin/chat" title="Assistente Gerencial">
+                                        <FiMessageSquare />
+                                    </Link>
+                                </>
                             )}
                         </div>
                         <div className={"user-info"}>

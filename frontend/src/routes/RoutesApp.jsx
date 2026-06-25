@@ -10,6 +10,7 @@ import Info from "../screens/Info/Info";
 import Checkout from "../screens/Checkout/Checkout";
 import Chat from "../screens/Chat/Chat";
 import Audit from "../screens/Audit/Audit";
+import AdminChat from "../screens/AdminChat/AdminChat";
 
 const RoutesApp = () => {
    return(
@@ -25,6 +26,7 @@ const RoutesApp = () => {
                     <Route element={<Chat />} path="/chat/:produtoId" />
                     <Route element={<Checkout />} path="/checkout" />
                     <Route element={<Audit />} path="/auditoria" />
+                    <Route element={<AdminChat />} path="/admin/chat" />
                 </Routes>
             </BrowserRouter>
         </AuthProvider>
