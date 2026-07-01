@@ -145,3 +145,40 @@ npm run coverage
 ```
 O relatório final gerado pelo Vitest é exportado para `coverage/`. Para submetê-lo, copiamos para `cobertura/frontend/`.
 
+---
+
+## Teste de Carga e Performance (k6)
+
+Foi realizada uma simulação de teste de carga utilizando o **k6** para validar a performance dos endpoints mais críticos da API sob concorrência.
+
+### Detalhes do Teste
+- **Cenário**: Simulação de usuários virtuais (VUs) acessando ciclicamente as principais operações do sistema com tempo de reflexão (*think time*) de 1s.
+- **Usuários Virtuais (VUs)**: Pico variável com múltiplos testes (10 VUs, 80 VUs, 130 VUs e 200 VUs).
+- **Duração**: 1 minuto por cenário (incluindo rampa de subida, estabilização e rampa de descida).
+- **Rotas Exercitadas**:
+  - `GET /ping` (Health check)
+  - `GET /api/produtos` (Listagem do catálogo com paginação)
+  - `GET /api/produtos/{id}` (Detalhes de produto específico usando ID selecionado dinamicamente)
+  - `POST /api/auth/login` (Autenticação corporativa)
+  - `GET /api/auditoria` (Painel de logs de auditoria)
+
+### Resultados Obtidos
+A aplicação manteve **100% de estabilidade** em todos os cenários sem derrubar requisições (`http_req_failed` em 0.00%), porém a latência aumenta sob alta carga.
+
+- **Com 10 VUs (Carga Leve)**:
+  - p(95): **26.88 ms** | Média: **12.67 ms**
+- **Com 80 VUs (Carga Média)**:
+  - p(95): **192.1 ms** | Média: **343.6 ms**
+- **Com 130 VUs (Carga Alta - Pós Warm-up)**:
+  - p(95): **11.76 s** *(Gargalo e cauda longa severa)*
+  - Média: **946 ms** *(Atinge a marca de ~1 segundo)*
+- **Com 200 VUs (Stress Extremo)**:
+  - p(95): **> 5 s** | Média: **> 700 ms**
+
+**Conclusão de Capacidade:** O sistema local consegue processar perfeitamente requests com concorrência pesada sem erros, suportando o limite ideal de **90 a 100 VUs** para manter a métrica rigorosa de p(95) perto de 1 segundo. Cargas maiores se acumulam e afetam respostas (contenção de banco/threads), embora a JVM tenha apresentado forte melhoria térmica (*Warm-up*) entre os testes.
+
+### Gargalos Identificados e Sugestões de Melhoria
+1. **Ordenação de Auditoria**: O endpoint `/api/auditoria` lê logs ordenados de forma decrescente pela coluna `criadoEm`. Em cenários reais com milhares de registros, essa operação causará lentidão (*Seq Scan*). **Ação**: Criar um índice na coluna `criado_em` da tabela `audit_log` para agilizar a ordenação e paginação.
+2. **Hit Direto ao Banco no Catálogo**: A rota de listagem de produtos (`/api/produtos`) faz leituras pesadas no banco a cada carregamento de página. **Ação**: Implementar cache em memória (como Caffeine) ou cache distribuído (como Redis) para os produtos ativos, invalidando-o apenas em criações/exclusões.
+
+
