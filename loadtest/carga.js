@@ -1,53 +1,72 @@
 import http from 'k6/http';
 import { check, sleep, group } from 'k6';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Teste de carga e performance — k6
-//
-// IMPORTANTE: rode contra o SEU AMBIENTE LOCAL (suba o projeto com
-// docker-compose antes). NÃO aponte para https://eqNN.dsc.rodrigor.com — o
-// servidor e o PostgreSQL são compartilhados com as outras equipes.
-// ─────────────────────────────────────────────────────────────────────────────
-
-// URL base do seu ambiente local. Ajuste a PORTA conforme o seu docker-compose
-// (ex.: 8080 para Spring Boot/Javalin, 8000 para FastAPI, 3000 para Next.js).
+// URL base do ambiente.
 const BASE = __ENV.BASE_URL || 'http://localhost:8080';
-
-// Nº de usuários virtuais simultâneos. Sobrescreva pela linha de comando:
-//   k6 run -e VUS=20 -e BASE_URL=http://localhost:3000 loadtest/carga.js
+// Número de usuários virtuais
 const VUS = Number(__ENV.VUS || 10);
 
 export const options = {
   stages: [
-    { duration: '30s', target: VUS },   // sobe a carga gradualmente
-    { duration: '1m',  target: VUS },   // mantém a carga
-    { duration: '20s', target: 0 },     // desaquece
+    { duration: '15s', target: VUS },   // Sobe a carga gradualmente
+    { duration: '30s', target: VUS },   // Mantém a carga máxima estável
+    { duration: '15s', target: 0 },     // Desaquecimento
   ],
   thresholds: {
-    http_req_failed:   ['rate<0.01'],   // meta: menos de 1% de falhas
-    http_req_duration: ['p(95)<500'],   // meta: 95% das respostas < 500 ms
+    http_req_failed:   ['rate<0.01'],   // Meta: menos de 1% de requisições com falha
+    http_req_duration: ['p(95)<500'],   // Meta: 95% das requisições devem responder abaixo de 500ms
   },
 };
 
 export default function () {
+  // 1. Healthcheck (/ping)
   group('healthcheck', () => {
     const res = http.get(`${BASE}/ping`);
-    check(res, { 'status 200': (r) => r.status === 200 });
+    check(res, { 'ping status 200': (r) => r.status === 200 });
   });
 
-  // ── EXEMPLO: fluxo autenticado — descomente e adapte ao seu projeto ──
-  // group('login + rota protegida', () => {
-  //   const login = http.post(`${BASE}/login`, JSON.stringify({
-  //     email: 'teste@exemplo.com', senha: 'senha123',
-  //   }), { headers: { 'Content-Type': 'application/json' } });
-  //   check(login, { 'login ok': (r) => r.status === 200 });
-  //
-  //   const token = login.json('token');
-  //   const r = http.get(`${BASE}/api/recurso`, {
-  //     headers: { Authorization: `Bearer ${token}` },
-  //   });
-  //   check(r, { 'recurso 200': (x) => x.status === 200 });
-  // });
+  // 2. Catálogo de Produtos
+  group('catalog', () => {
+    const res = http.get(`${BASE}/api/produtos`);
+    check(res, { 'produtos status 200': (r) => r.status === 200 });
+
+    let productIds = [];
+    try {
+      const body = JSON.parse(res.body);
+      if (body && body.content && body.content.length > 0) {
+        productIds = body.content.map(p => p.id);
+      }
+    } catch (e) {
+      // Ignora erro se não conseguir decodificar
+    }
+
+    // Busca detalhe de um produto caso exista
+    if (productIds.length > 0) {
+      const randomId = productIds[Math.floor(Math.random() * productIds.length)];
+      const detailRes = http.get(`${BASE}/api/produtos/${randomId}`);
+      check(detailRes, { 'produto individual status 200': (r) => r.status === 200 });
+    }
+  });
+
+  // 3. Autenticação (Login)
+  group('auth', () => {
+    const payload = JSON.stringify({
+      email: 'admin',
+      senha: 'admin123',
+    });
+    const params = {
+      headers: { 'Content-Type': 'application/json' },
+    };
+    const loginRes = http.post(`${BASE}/api/auth/login`, payload, params);
+    check(loginRes, { 'login status 200': (r) => r.status === 200 });
+  });
+
+  // 4. Auditoria
+  group('auditoria', () => {
+    const auditRes = http.get(`${BASE}/api/auditoria`);
+    check(auditRes, { 'auditoria status 200': (r) => r.status === 200 });
+  });
 
   sleep(1);
 }
+
