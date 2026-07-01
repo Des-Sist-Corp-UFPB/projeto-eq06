@@ -67,6 +67,24 @@ A aplicação fornece uma interface dedicada para administradores visualizarem o
 
 ---
 
+## Integração com Serviço Externo
+
+O sistema está integrado à API de inteligência artificial do **Google Gemini** para disponibilizar assistentes virtuais de conversação tanto para clientes comuns (dúvidas sobre o projeto) quanto para administradores (gestão de estoque e inventário).
+
+- **Serviço Externo**: Google Gemini API (modelos `gemini-3.1-flash-lite` e `gemini-2.5-flash`).
+- **Funcionalidade**: 
+  - Chatbot para administradores com injeção de contexto do banco de dados local (quantidade de produtos e valor estimado em estoque) e guardrails para evitar *prompt injection*.
+  - Chatbot para usuários comuns nas telas de chat para dúvidas gerais sobre os produtos.
+- **Classes Participantes (Backend)**:
+  - [GeminiService](file:///c:/Users/samuel.dantas/Downloads/projeto-eq06/backend/src/main/java/br/ufpb/dsc/mercado/service/GeminiService.java) - Serviço que realiza as requisições REST para a API do Google Gemini.
+  - [AdminChatController](file:///c:/Users/samuel.dantas/Downloads/projeto-eq06/backend/src/main/java/br/ufpb/dsc/mercado/controller/AdminChatController.java) - Endpoint REST de chat gerencial (`/api/admin/chat`) com injeção de contexto e guardrails de NLP.
+  - [ChatIAController](file:///c:/Users/samuel.dantas/Downloads/projeto-eq06/backend/src/main/java/br/ufpb/dsc/mercado/controller/ChatIAController.java) - Endpoint REST de chat comum com IA (`/api/chat/ia`).
+  - [GeminiResponse](file:///c:/Users/samuel.dantas/Downloads/projeto-eq06/backend/src/main/java/br/ufpb/dsc/mercado/dto/GeminiResponse.java) - DTO de mapeamento de resposta JSON do Gemini.
+- **Configuração**:
+  - A integração requer a definição da variável de ambiente **`GEMINI_API_KEY`**, configurada nos arquivos `application.yml`, `application-dev.yml` e `application-prod.yml`.
+
+---
+
 ## Como Executar o Projeto
 
 **1. Clone o repositório:**
@@ -87,41 +105,38 @@ docker compose -f docker/docker-compose.dev.yml up --build -d
 
 ---
 
-## Como Executar os Testes Automatizados
+## Como Executar os Testes Automatizados e Relatórios de Cobertura
 
-O projeto foi configurado com a exigência de **85% de cobertura de testes** tanto no Backend quanto no Frontend.
+O projeto exige uma cobertura de testes de no mínimo **85%** em ambas as camadas (Backend e Frontend). Atualmente, a cobertura atinge os seguintes patamares:
 
-### 1. Backend (Java 21 + Spring Boot)
-Os testes do backend utilizam as seguintes tecnologias:
-- **JUnit 5** e **Mockito** para Testes Unitários das regras de negócio (`Services` e `Controllers`).
-- **Testcontainers** e **@SpringBootTest** para Testes de Integração com banco de dados PostgreSQL real. *(Atenção: O Docker Desktop/Daemon **precisa estar rodando** na sua máquina para os testes de integração passarem).*
-- **JaCoCo** para auditoria de cobertura de código.
+- **Backend**: **93.87%** de cobertura de linhas (91.71% de cobertura de instruções).
+  - Relatório JaCoCo: [cobertura/backend/index.html](file:///c:/Users/samuel.dantas/Downloads/projeto-eq06/cobertura/backend/index.html)
+- **Frontend**: **93.97%** de cobertura de linhas (93.01% de cobertura de statements).
+  - Relatório Vitest: [cobertura/frontend/index.html](file:///c:/Users/samuel.dantas/Downloads/projeto-eq06/cobertura/frontend/index.html)
 
-Para rodar os testes e verificar a cobertura no backend:
+### 1. Backend (Java 21/25 + Spring Boot)
+Os testes do backend utilizam **JUnit 5**, **Mockito** e **Testcontainers** para testes de integração com banco real. Devido ao ambiente executar Java 25, o build está configurado para habilitar propriedades experimentais do Byte Buddy no Surefire.
+
+Para rodar os testes e gerar o relatório JaCoCo:
 ```bash
 # Na pasta backend do projeto:
 cd backend
-mvn clean verify
+mvn clean test jacoco:report
 ```
-*Se a cobertura ficar abaixo de 85%, a build falhará.*
+O relatório final gerado pelo JaCoCo é exportado para `target/site/jacoco/`. Para submetê-lo, copiamos para `cobertura/backend/`.
 
 ### 2. Frontend (React + Vite)
-Os testes do frontend utilizam as seguintes tecnologias:
-- **Vitest** como motor de testes (rápido e compatível nativamente com Vite).
-- **React Testing Library (RTL)** para simulação de renderização de componentes e eventos de usuários (como cliques).
-- **@vitest/coverage-v8** para relatórios de cobertura.
+Os testes do frontend utilizam **Vitest** e **React Testing Library (RTL)**.
 
-Para rodar os testes do frontend:
+Para instalar as dependências (primeira execução):
 ```bash
-# Entre na pasta frontend
 cd frontend
-
-# Para instalar as dependências de testes (se for a primeira vez)
 npm install
+```
 
-# Para rodar os testes
-npm run test
-
-# Para rodar os testes exigindo a cobertura de 85%
+Para rodar os testes com o cálculo de cobertura:
+```bash
 npm run coverage
 ```
+O relatório final gerado pelo Vitest é exportado para `coverage/`. Para submetê-lo, copiamos para `cobertura/frontend/`.
+

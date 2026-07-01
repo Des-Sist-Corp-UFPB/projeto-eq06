@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GlobalModelAttributes.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mercado</a> &gt; <a href="index.source.html" class="el_package">br.ufpb.dsc.mercado.config</a> &gt; <span class="el_source">GlobalModelAttributes.java</span></div><h1>GlobalModelAttributes.java</h1><pre class="source lang-java linenums">package br.ufpb.dsc.mercado.config;
+
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ModelAttribute;
+
+/**
+ * Adiciona atributos globais ao modelo de todos os templates Thymeleaf.
+ *
+ * &lt;p&gt;&lt;strong&gt;Por que esta classe existe?&lt;/strong&gt;&lt;br&gt;
+ * O Thymeleaf 3.1 (padrão no Spring Boot 3.x) removeu o acesso direto a objetos
+ * como {@code #request}, {@code #session} e {@code #response} nos templates,
+ * por questões de segurança (evita vazamento acidental de informações sensíveis).
+ *
+ * &lt;p&gt;A solução recomendada é expor apenas o que for necessário via {@code @ModelAttribute},
+ * deixando o controller responsável por decidir o que o template pode acessar.
+ *
+ * &lt;p&gt;&lt;strong&gt;{@code @ControllerAdvice}:&lt;/strong&gt;&lt;br&gt;
+ * Permite aplicar comportamentos transversais (cross-cutting concerns) a múltiplos
+ * controllers sem duplicar código. Métodos anotados com {@code @ModelAttribute} aqui
+ * são executados antes de QUALQUER método de qualquer controller, adicionando atributos
+ * automaticamente ao modelo.
+ *
+ * &lt;p&gt;Uso no template Thymeleaf:
+ * &lt;pre&gt;
+ *   {@code th:classappend=&quot;${requestURI.startsWith('/produtos')} ? 'active'&quot;}
+ * &lt;/pre&gt;
+ *
+ * @author DSC - UFPB Campus IV
+ */
+@ControllerAdvice
+<span class="fc" id="L32">public class GlobalModelAttributes {</span>
+
+    /**
+     * Disponibiliza a URI da requisição atual para todos os templates.
+     *
+     * &lt;p&gt;Utilizado pelo layout para marcar o item de menu ativo na navbar.
+     *
+     * @param request objeto da requisição HTTP injetado pelo Spring
+     * @return URI da requisição atual (ex.: &quot;/produtos&quot;, &quot;/produtos/novo&quot;)
+     */
+    @ModelAttribute(&quot;requestURI&quot;)
+    public String requestURI(HttpServletRequest request) {
+<span class="fc" id="L44">        return request.getRequestURI();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

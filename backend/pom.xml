@@ -157,6 +157,15 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
+            <!-- Surefire Plugin: Configurado para aceitar Java 25 via Byte Buddy experimental -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>@{argLine} -Dnet.bytebuddy.experimental=true</argLine>
+                </configuration>
+            </plugin>
+
             <!-- JaCoCo: cobertura de código -->
             <plugin>
                 <groupId>org.jacoco</groupId>

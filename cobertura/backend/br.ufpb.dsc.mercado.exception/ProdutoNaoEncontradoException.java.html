@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProdutoNaoEncontradoException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mercado</a> &gt; <a href="index.source.html" class="el_package">br.ufpb.dsc.mercado.exception</a> &gt; <span class="el_source">ProdutoNaoEncontradoException.java</span></div><h1>ProdutoNaoEncontradoException.java</h1><pre class="source lang-java linenums">package br.ufpb.dsc.mercado.exception;
+
+/**
+ * Exceção lançada quando um produto não é encontrado no banco de dados.
+ *
+ * &lt;p&gt;&lt;strong&gt;Por que usar exceções específicas de domínio?&lt;/strong&gt;&lt;br&gt;
+ * Em vez de lançar uma exceção genérica ({@code RuntimeException} com mensagem &quot;not found&quot;),
+ * criar exceções específicas melhora:
+ * &lt;ul&gt;
+ *   &lt;li&gt;&lt;strong&gt;Legibilidade&lt;/strong&gt;: o código comunica claramente o que aconteceu.&lt;/li&gt;
+ *   &lt;li&gt;&lt;strong&gt;Tratamento centralizado&lt;/strong&gt;: é possível capturar esta exceção específica
+ *       em um handler global ({@code @ControllerAdvice}) e retornar HTTP 404.&lt;/li&gt;
+ *   &lt;li&gt;&lt;strong&gt;Rastreabilidade&lt;/strong&gt;: logs ficam mais descritivos.&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * &lt;p&gt;&lt;strong&gt;Por que extends RuntimeException?&lt;/strong&gt;&lt;br&gt;
+ * {@code RuntimeException} é uma &quot;unchecked exception&quot; — não precisa ser declarada no {@code throws}
+ * nem capturada obrigatoriamente. É a abordagem moderna em Spring para exceções de negócio.
+ * &quot;Checked exceptions&quot; (que extends {@code Exception}) são mais usadas para erros recuperáveis
+ * de infraestrutura (I/O, rede, etc.).
+ *
+ * @author DSC - UFPB Campus IV
+ */
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class ProdutoNaoEncontradoException extends RuntimeException {
+
+    /**
+     * Cria uma exceção com mensagem padrão informando o ID do produto não encontrado.
+     *
+     * @param id identificador do produto que não foi encontrado
+     */
+    public ProdutoNaoEncontradoException(Long id) {
+<span class="fc" id="L36">        super(&quot;Produto não encontrado com id: &quot; + id);</span>
+<span class="fc" id="L37">    }</span>
+
+    /**
+     * Cria uma exceção com mensagem customizada.
+     *
+     * @param mensagem descrição do erro
+     */
+    public ProdutoNaoEncontradoException(String mensagem) {
+<span class="nc" id="L45">        super(mensagem);</span>
+<span class="nc" id="L46">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

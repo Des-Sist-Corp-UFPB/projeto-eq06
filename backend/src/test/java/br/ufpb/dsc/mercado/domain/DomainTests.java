@@ -88,4 +88,44 @@ class DomainTests {
         f.onCreate();
         assertNotNull(f.getCriadoEm());
     }
+
+    @Test
+    void testAuditLog() {
+        AuditLog al = new AuditLog();
+        al.setId(1L);
+        al.setAcao("ACAO");
+        al.setDetalhes("DETALHES");
+        al.setIpAddress("IP");
+        al.setUsuario("USER");
+        al.setCriadoEm(java.time.Instant.MIN);
+
+        assertEquals(1L, al.getId());
+        assertEquals("ACAO", al.getAcao());
+        assertEquals("DETALHES", al.getDetalhes());
+        assertEquals("IP", al.getIpAddress());
+        assertEquals("USER", al.getUsuario());
+        assertEquals(java.time.Instant.MIN, al.getCriadoEm());
+
+        al.prePersist();
+        assertNotNull(al.getCriadoEm());
+
+        AuditLog al2 = new AuditLog("ACAO2", "DETALHES2", "IP2", "USER2");
+        assertNull(al2.getId());
+        assertEquals("ACAO2", al2.getAcao());
+    }
+
+    @Test
+    void testMensagem() {
+        Mensagem m = new Mensagem();
+        m.setProdutoId(1L);
+        m.setRemetenteId(2L);
+        m.setTexto("TEXTO");
+        
+        assertEquals(1L, m.getProdutoId());
+        assertEquals(2L, m.getRemetenteId());
+        assertEquals("TEXTO", m.getTexto());
+        
+        m.prePersist();
+        assertNotNull(m.getEnviadaEm());
+    }
 }

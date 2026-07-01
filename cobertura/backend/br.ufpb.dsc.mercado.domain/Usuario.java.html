@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Usuario.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mercado</a> &gt; <a href="index.source.html" class="el_package">br.ufpb.dsc.mercado.domain</a> &gt; <span class="el_source">Usuario.java</span></div><h1>Usuario.java</h1><pre class="source lang-java linenums">package br.ufpb.dsc.mercado.domain;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = &quot;usuario&quot;)
+<span class="fc" id="L8">public class Usuario {</span>
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String nome;
+
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(nullable = false)
+    private String senha;
+
+    @Column(name = &quot;criado_em&quot;, updatable = false)
+    private LocalDateTime criadoEm;
+
+    @Column(name = &quot;atualizado_em&quot;)
+    private LocalDateTime atualizadoEm;
+
+    @PrePersist
+    protected void onCreate() {
+<span class="fc" id="L31">        this.criadoEm = LocalDateTime.now();</span>
+<span class="fc" id="L32">        this.atualizadoEm = LocalDateTime.now();</span>
+<span class="fc" id="L33">    }</span>
+
+    @PreUpdate
+    protected void onUpdate() {
+<span class="fc" id="L37">        this.atualizadoEm = LocalDateTime.now();</span>
+<span class="fc" id="L38">    }</span>
+
+    // Getters e Setters
+
+    public Long getId() {
+<span class="fc" id="L43">        return id;</span>
+    }
+
+    public void setId(Long id) {
+<span class="fc" id="L47">        this.id = id;</span>
+<span class="fc" id="L48">    }</span>
+
+    public String getNome() {
+<span class="fc" id="L51">        return nome;</span>
+    }
+
+    public void setNome(String nome) {
+<span class="fc" id="L55">        this.nome = nome;</span>
+<span class="fc" id="L56">    }</span>
+
+    public String getEmail() {
+<span class="fc" id="L59">        return email;</span>
+    }
+
+    public void setEmail(String email) {
+<span class="fc" id="L63">        this.email = email;</span>
+<span class="fc" id="L64">    }</span>
+
+    public String getSenha() {
+<span class="fc" id="L67">        return senha;</span>
+    }
+
+    public void setSenha(String senha) {
+<span class="fc" id="L71">        this.senha = senha;</span>
+<span class="fc" id="L72">    }</span>
+
+    public LocalDateTime getCriadoEm() {
+<span class="fc" id="L75">        return criadoEm;</span>
+    }
+
+    public void setCriadoEm(LocalDateTime criadoEm) {
+<span class="fc" id="L79">        this.criadoEm = criadoEm;</span>
+<span class="fc" id="L80">    }</span>
+
+    public LocalDateTime getAtualizadoEm() {
+<span class="fc" id="L83">        return atualizadoEm;</span>
+    }
+
+    public void setAtualizadoEm(LocalDateTime atualizadoEm) {
+<span class="fc" id="L87">        this.atualizadoEm = atualizadoEm;</span>
+<span class="fc" id="L88">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

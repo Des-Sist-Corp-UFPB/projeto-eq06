@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SecurityConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mercado</a> &gt; <a href="index.source.html" class="el_package">br.ufpb.dsc.mercado.config</a> &gt; <span class="el_source">SecurityConfig.java</span></div><h1>SecurityConfig.java</h1><pre class="source lang-java linenums">package br.ufpb.dsc.mercado.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
+
+/**
+ * Configuração de segurança da aplicação usando Spring Security 6.
+ *
+ * &lt;p&gt;&lt;strong&gt;Como o Spring Security funciona?&lt;/strong&gt;&lt;br&gt;
+ * O Spring Security é baseado em uma cadeia de filtros (Filter Chain) que intercepta
+ * todas as requisições HTTP antes de chegarem ao Controller. Cada filtro tem uma
+ * responsabilidade específica (autenticação, autorização, CSRF, etc.).
+ *
+ * &lt;p&gt;&lt;strong&gt;Principais conceitos:&lt;/strong&gt;
+ * &lt;ul&gt;
+ *   &lt;li&gt;&lt;strong&gt;Authentication&lt;/strong&gt;: Verifica quem é o usuário (login/senha).&lt;/li&gt;
+ *   &lt;li&gt;&lt;strong&gt;Authorization&lt;/strong&gt;: Verifica o que o usuário pode fazer (roles/permissões).&lt;/li&gt;
+ *   &lt;li&gt;&lt;strong&gt;CSRF&lt;/strong&gt;: Proteção contra Cross-Site Request Forgery.&lt;/li&gt;
+ *   &lt;li&gt;&lt;strong&gt;PasswordEncoder&lt;/strong&gt;: Nunca armazene senhas em texto puro! BCrypt aplica um
+ *       hash com salt aleatório a cada chamada.&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * &lt;p&gt;&lt;strong&gt;{@code @Configuration} + {@code @EnableWebSecurity}:&lt;/strong&gt;&lt;br&gt;
+ * {@code @Configuration} marca a classe como fonte de definição de beans.
+ * {@code @EnableWebSecurity} ativa a integração do Spring Security com o contexto do Spring MVC.
+ *
+ * @author DSC - UFPB Campus IV
+ */
+@Configuration
+@EnableWebSecurity
+<span class="fc" id="L42">public class SecurityConfig {</span>
+
+    /**
+     * Define o serviço de usuários em memória.
+     *
+     * &lt;p&gt;&lt;strong&gt;ATENÇÃO — APENAS PARA DESENVOLVIMENTO E DEMONSTRAÇÃO.&lt;/strong&gt;&lt;br&gt;
+     * Em produção, substitua por um {@code UserDetailsService} que busca usuários do banco
+     * de dados (ex.: via Spring Data JPA) e utilize senhas armazenadas com BCrypt.
+     *
+     * &lt;p&gt;{@code User.builder()} é um fluent builder do Spring Security para criar usuários.
+     * O password DEVE ser codificado — nunca passe a senha em texto puro.
+     *
+     * @param encoder codificador de senhas (injetado automaticamente pelo Spring)
+     * @return gerenciador de usuários em memória
+     */
+    @Bean
+    public UserDetailsService userDetailsService(PasswordEncoder encoder) {
+<span class="fc" id="L59">        UserDetails admin = User.builder()</span>
+<span class="fc" id="L60">                .username(&quot;admin&quot;)</span>
+                // encode() aplica BCrypt na senha — o hash muda a cada chamada mas a verificação funciona
+<span class="fc" id="L62">                .password(encoder.encode(&quot;admin123&quot;))</span>
+                // ROLE_ADMIN é adicionado automaticamente; &quot;roles&quot; é um atalho para &quot;authorities&quot;
+<span class="fc" id="L64">                .roles(&quot;ADMIN&quot;)</span>
+<span class="fc" id="L65">                .build();</span>
+<span class="fc" id="L66">        return new InMemoryUserDetailsManager(admin);</span>
+    }
+
+    /**
+     * Define o algoritmo de codificação de senhas.
+     *
+     * &lt;p&gt;&lt;strong&gt;Por que BCrypt?&lt;/strong&gt;&lt;br&gt;
+     * BCrypt é um algoritmo de hash adaptativo — você pode aumentar o &quot;cost factor&quot;
+     * conforme os computadores ficam mais rápidos, sem precisar re-hashear as senhas.
+     * Ele também adiciona um salt aleatório automaticamente, impedindo ataques de
+     * rainbow table (tabelas pré-computadas de hashes).
+     *
+     * &lt;p&gt;Nunca use MD5, SHA-1 ou SHA-256 simples para senhas!
+     *
+     * @return instância do BCryptPasswordEncoder
+     */
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+<span class="fc" id="L84">        return new BCryptPasswordEncoder();</span>
+    }
+
+    /**
+     * Configura a cadeia de filtros de segurança HTTP.
+     *
+     * &lt;p&gt;Este é o método central da configuração do Spring Security.
+     * A API fluente do {@code HttpSecurity} permite configurar:
+     * &lt;ul&gt;
+     *   &lt;li&gt;Quais URLs são públicas e quais exigem autenticação&lt;/li&gt;
+     *   &lt;li&gt;Como o login é feito (formulário, OAuth2, JWT, etc.)&lt;/li&gt;
+     *   &lt;li&gt;Como o logout funciona&lt;/li&gt;
+     *   &lt;li&gt;Configurações de CSRF, headers de segurança, etc.&lt;/li&gt;
+     * &lt;/ul&gt;
+     *
+     * @param http construtor de configuração de segurança HTTP
+     * @return cadeia de filtros configurada
+     * @throws Exception se ocorrer erro na configuração
+     */
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+<span class="fc" id="L105">        http</span>
+                // === AUTORIZAÇÃO DE REQUISIÇÕES ===
+<span class="fc" id="L107">                .authorizeHttpRequests(auth -&gt; auth</span>
+<span class="fc" id="L108">                        .dispatcherTypeMatchers(jakarta.servlet.DispatcherType.FORWARD, jakarta.servlet.DispatcherType.ERROR).permitAll()</span>
+                        // Recursos estáticos e health check são públicos
+                        // /webjars/** → Bootstrap, HTMX (servidos pelo Spring como recursos estáticos)
+                        // /css/**, /js/** → arquivos estáticos personalizados
+                        // /actuator/health → monitoramento sem autenticação
+<span class="fc" id="L113">                        .requestMatchers(&quot;/&quot;, &quot;/index.html&quot;, &quot;/main&quot;, &quot;/favorites&quot;, &quot;/criar-conta&quot;, &quot;/info/**&quot;, &quot;/checkout&quot;, &quot;/auditoria&quot;, &quot;/assets/**&quot;, &quot;/webjars/**&quot;, &quot;/css/**&quot;, &quot;/js/**&quot;, &quot;/images/**&quot;, &quot;/actuator/health&quot;, &quot;/ping&quot;, &quot;/api/auth/login&quot;, &quot;/api/produtos/**&quot;, &quot;/api/usuarios/**&quot;, &quot;/api/auditoria/**&quot;, &quot;/api/admin/**&quot;, &quot;/error&quot;, &quot;/api/mensagens/**&quot;, &quot;/api/chat/**&quot;).permitAll()</span>
+                        // Qualquer outra requisição exige autenticação
+<span class="fc" id="L115">                        .anyRequest().authenticated()</span>
+                )
+
+                // === FORMULÁRIO DE LOGIN ===
+<span class="fc" id="L119">                .formLogin(form -&gt; form</span>
+                        // URL da página de login customizada (em vez da padrão do Spring Security)
+<span class="fc" id="L121">                        .loginPage(&quot;/login&quot;)</span>
+                        // Após login bem-sucedido, redireciona para /main
+                        // O segundo parâmetro (true) força sempre ir para esta URL,
+                        // ignorando a URL que o usuário tentou acessar antes do login
+<span class="fc" id="L125">                        .defaultSuccessUrl(&quot;/main&quot;, true)</span>
+                        // A página de login deve ser acessível sem autenticação
+<span class="fc" id="L127">                        .permitAll()</span>
+                )
+
+                // === LOGOUT ===
+<span class="fc" id="L131">                .logout(logout -&gt; logout</span>
+                        // Após logout, redireciona para a página de login com mensagem
+<span class="fc" id="L133">                        .logoutSuccessUrl(&quot;/login?logout&quot;)</span>
+<span class="fc" id="L134">                        .permitAll()</span>
+                )
+
+                // === CSRF (Cross-Site Request Forgery) ===
+                // CSRF é um ataque onde um site malicioso faz requisições em nome do usuário autenticado.
+                // O Spring Security protege adicionando um token único em formulários.
+                // Para HTMX funcionar com PUT/DELETE, precisamos de uma configuração especial.
+                // Em produção real, considere usar o mecanismo de CSRF com SameSite cookies.
+<span class="fc" id="L142">                .csrf(csrf -&gt; csrf</span>
+                        // Desabilita CSRF apenas para os endpoints de produtos e login
+<span class="fc" id="L144">                        .ignoringRequestMatchers(&quot;/produtos/**&quot;, &quot;/api/produtos/**&quot;, &quot;/api/usuarios/**&quot;, &quot;/login&quot;, &quot;/api/auth/login&quot;, &quot;/api/admin/**&quot;, &quot;/api/mensagens/**&quot;, &quot;/api/chat/**&quot;)</span>
+                );
+
+<span class="fc" id="L147">        return http.build();</span>
+    }
+
+    /**
+     * Expõe o {@code AuthenticationManager} como bean do Spring.
+     *
+     * &lt;p&gt;Necessário quando você precisa injetar o {@code AuthenticationManager} em outras classes,
+     * como em um controller de API REST que faz autenticação programática.
+     * Para este projeto educacional, serve como exemplo de como expor o bean.
+     *
+     * @param config configuração de autenticação gerenciada pelo Spring Security
+     * @return instância do AuthenticationManager
+     * @throws Exception se ocorrer erro ao obter o manager
+     */
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+<span class="fc" id="L163">        return config.getAuthenticationManager();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

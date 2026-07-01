@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import ProdutoModal from './ProdutoModal';
+import { AuthContext } from '../../context/AuthContext';
 
 // Mock do toast
 vi.mock('react-toastify', () => ({
@@ -22,13 +23,21 @@ describe('ProdutoModal', () => {
         global.fetch = vi.fn();
     });
 
+    const renderModal = () => {
+        return render(
+            <AuthContext.Provider value={{ user: { email: 'admin' }, logout: vi.fn() }}>
+                <ProdutoModal onClose={mockOnClose} onProductCreated={mockOnProductCreated} />
+            </AuthContext.Provider>
+        );
+    };
+
     it('renders correctly', () => {
-        render(<ProdutoModal onClose={mockOnClose} onProductCreated={mockOnProductCreated} />);
+        renderModal();
         expect(screen.getByText('Cadastrar Produto')).toBeInTheDocument();
     });
 
     it('calls onClose when clicking outside or close button', () => {
-        render(<ProdutoModal onClose={mockOnClose} onProductCreated={mockOnProductCreated} />);
+        renderModal();
         
         fireEvent.click(screen.getByText('×'));
         expect(mockOnClose).toHaveBeenCalledTimes(1);
@@ -40,7 +49,7 @@ describe('ProdutoModal', () => {
     });
 
     it('shows warning when submitting without required fields', () => {
-        const { container } = render(<ProdutoModal onClose={mockOnClose} onProductCreated={mockOnProductCreated} />);
+        const { container } = renderModal();
         
         // Form submit directly
         const form = container.querySelector('form');
@@ -55,7 +64,7 @@ describe('ProdutoModal', () => {
             json: async () => ({ id: 1, nome: 'Teste' })
         });
 
-        render(<ProdutoModal onClose={mockOnClose} onProductCreated={mockOnProductCreated} />);
+        renderModal();
 
         fireEvent.change(screen.getByPlaceholderText('Ex: Tênis Esportivo'), { target: { value: 'Produto Teste' } });
         fireEvent.change(screen.getByPlaceholderText('Ex: 150.00'), { target: { value: '100' } });
@@ -74,7 +83,7 @@ describe('ProdutoModal', () => {
             status: 400
         });
 
-        render(<ProdutoModal onClose={mockOnClose} onProductCreated={mockOnProductCreated} />);
+        renderModal();
 
         fireEvent.change(screen.getByPlaceholderText('Ex: Tênis Esportivo'), { target: { value: 'Produto Teste' } });
         fireEvent.change(screen.getByPlaceholderText('Ex: 150.00'), { target: { value: '100' } });
@@ -92,7 +101,7 @@ describe('ProdutoModal', () => {
             status: 500
         });
 
-        render(<ProdutoModal onClose={mockOnClose} onProductCreated={mockOnProductCreated} />);
+        renderModal();
 
         fireEvent.change(screen.getByPlaceholderText('Ex: Tênis Esportivo'), { target: { value: 'Produto Teste' } });
         fireEvent.change(screen.getByPlaceholderText('Ex: 150.00'), { target: { value: '100' } });
@@ -107,7 +116,7 @@ describe('ProdutoModal', () => {
     it('handles network error', async () => {
         global.fetch.mockRejectedValueOnce(new Error('Network error'));
 
-        render(<ProdutoModal onClose={mockOnClose} onProductCreated={mockOnProductCreated} />);
+        renderModal();
 
         fireEvent.change(screen.getByPlaceholderText('Ex: Tênis Esportivo'), { target: { value: 'Produto Teste' } });
         fireEvent.change(screen.getByPlaceholderText('Ex: 150.00'), { target: { value: '100' } });
