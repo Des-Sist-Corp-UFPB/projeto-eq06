@@ -4,6 +4,11 @@ Projeto para a disciplina **Desenvolvimento de Sistemas Corporativos**.
 
 **Professor**: Rodrigo Rebouças | **UFPB — Campus IV**
 
+**Alunos**:
+- Samuel César Dantas Mota. username do git: samuelcsar
+- Sabrina Gonçalves de Almeida. username do git: sabrina-goncalves-de-almeida
+
+
 ---
 
 ## Funcionalidades Implementadas
