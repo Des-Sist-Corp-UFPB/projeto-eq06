@@ -20,7 +20,9 @@ jobs:
         run: echo "IMAGE=ghcr.io/$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]'):latest" >> $GITHUB_ENV
 
       - name: Iniciar o Docker
-        run: sudo systemctl start docker || sudo service docker start
+        run: |
+          sudo systemctl start docker || sudo service docker start
+          sudo chmod 666 /var/run/docker.sock || true
 
       - name: Login no GitHub Container Registry
         uses: docker/login-action@v3
