@@ -110,34 +110,6 @@ docker compose -f docker/docker-compose.dev.yml up --build -d
 
 ---
 
-## Health Check e Diagnóstico
-
-A aplicação possui um endpoint público para verificação rápida de integridade e conectividade com o banco de dados:
-
-- **Rota**: `GET /ping`
-- **Funcionamento**: Executa uma consulta simples (`SELECT 1`) no banco de dados PostgreSQL.
-- **Respostas**:
-  - **Sucesso (Banco operando)**: Retorna HTTP `200 OK` e o payload:
-    ```json
-    {
-      "status": "ok",
-      "database": "up",
-      "service": "eq06",
-      "timestamp": "2026-07-15T..."
-    }
-    ```
-  - **Falha (Banco inacessível)**: Retorna HTTP `503 Service Unavailable` e o payload:
-    ```json
-    {
-      "status": "error",
-      "database": "down (detalhes da falha)",
-      "service": "eq06",
-      "timestamp": "2026-07-15T..."
-    }
-    ```
-
----
-
 ## Como Executar os Testes Automatizados e Relatórios de Cobertura
 
 O projeto exige uma cobertura de testes de no mínimo **85%** em ambas as camadas (Backend e Frontend). Atualmente, a cobertura atinge os seguintes patamares:
@@ -150,18 +122,13 @@ O projeto exige uma cobertura de testes de no mínimo **85%** em ambas as camada
 ### 1. Backend (Java 21/25 + Spring Boot)
 Os testes do backend utilizam **JUnit 5**, **Mockito** e **Testcontainers** para testes de integração com banco real. Devido ao ambiente executar Java 25, o build está configurado para habilitar propriedades experimentais do Byte Buddy no Surefire.
 
-Para rodar os testes e gerar o relatório JaCoCo localmente:
+Para rodar os testes e gerar o relatório JaCoCo:
 ```bash
 # Na pasta backend do projeto:
 cd backend
 mvn clean test jacoco:report
 ```
-O relatório final gerado pelo JaCoCo é exportado para `target/site/jacoco/`.
-
-Para rodar os testes unitários dentro do container de desenvolvimento do Docker (caso o ambiente já esteja rodando):
-```bash
-docker exec mercado-app-dev mvn test
-```
+O relatório final gerado pelo JaCoCo é exportado para `target/site/jacoco/`. Para submetê-lo, copiamos para `cobertura/backend/`.
 
 ### 2. Frontend (React + Vite)
 Os testes do frontend utilizam **Vitest** e **React Testing Library (RTL)**.
