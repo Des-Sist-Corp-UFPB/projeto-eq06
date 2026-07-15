@@ -8,7 +8,7 @@ on:
 jobs:
   build-and-deploy:
     name: Build, push e deploy
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
@@ -18,11 +18,6 @@ jobs:
 
       - name: Prepara nome da imagem (lowercase)
         run: echo "IMAGE=ghcr.io/$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]'):latest" >> $GITHUB_ENV
-
-      - name: Iniciar o Docker
-        run: |
-          sudo systemctl start docker || sudo service docker start
-          sudo chmod 666 /var/run/docker.sock || true
 
       - name: Login no GitHub Container Registry
         uses: docker/login-action@v3
