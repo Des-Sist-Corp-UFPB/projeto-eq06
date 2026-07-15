@@ -42,5 +42,6 @@ jobs:
           # Envia "actor:token" ao servidor. A chave é travada (command=),
           # então o servidor usa esse token efêmero só para puxar a imagem do GHCR.
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            -o ServerAliveInterval=60 -o ServerAliveCountMax=10 \
             "${{ secrets.SSH_USERNAME }}@dsc.rodrigor.com" \
             "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}"
