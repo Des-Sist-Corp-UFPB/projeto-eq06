@@ -71,4 +71,6 @@ ENTRYPOINT ["java", \
     "-XX:+UseContainerSupport", \
     "-XX:MaxRAMPercentage=75.0", \
     "-Dspring.profiles.active=prod", \
-    "-jar", "app.jar"]
+    "-jar", "app.jar", "-javaagent:/app/otel.jar", "/app/app.jar"]
+
+COPY opentelemetry-javaagent.jar /app/otel.jar

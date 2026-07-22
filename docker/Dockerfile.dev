@@ -25,5 +25,7 @@ RUN mvn dependency:go-offline -B
 
 EXPOSE 8080
 
+COPY opentelemetry-javaagent.jar /app/opentelemetry-javaagent.jar
+
 # Spring DevTools requer o argumento -Dspring-boot.run.fork=false para funcionar em container
-CMD ["mvn", "spring-boot:run", "-Dspring-boot.run.jvmArguments=-Dspring.profiles.active=dev"]
+CMD ["mvn", "spring-boot:run", "-Dspring-boot.run.jvmArguments=-javaagent:/app/opentelemetry-javaagent.jar -Dspring.profiles.active=dev"]

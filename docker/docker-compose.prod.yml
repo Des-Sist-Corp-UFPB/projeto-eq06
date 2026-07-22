@@ -45,7 +45,7 @@ services:
     expose:
       - "5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME} -d eq06"]
+      test: [ "CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME} -d eq06" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -80,11 +80,11 @@ services:
     # Healthcheck via Spring Actuator — o Docker considera o container saudável
     # somente quando a aplicação estiver pronta para receber requisições.
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
+      test: [ "CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1" ]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 60s    # Spring Boot precisa de até 60s para inicializar
+      start_period: 60s # Spring Boot precisa de até 60s para inicializar
     restart: unless-stopped
     networks:
       - mercado-net
@@ -94,5 +94,5 @@ volumes:
   postgres-prod-data:
 
 networks:
-    mercado-net:
-        driver: bridge
+  mercado-net:
+    driver: bridge
