@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProdutoService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mercado</a> &gt; <a href="index.source.html" class="el_package">br.ufpb.dsc.mercado.service</a> &gt; <span class="el_source">ProdutoService.java</span></div><h1>ProdutoService.java</h1><pre class="source lang-java linenums">package br.ufpb.dsc.mercado.service;
+
+import br.ufpb.dsc.mercado.domain.Produto;
+import br.ufpb.dsc.mercado.dto.ProdutoForm;
+import br.ufpb.dsc.mercado.exception.ProdutoNaoEncontradoException;
+import br.ufpb.dsc.mercado.repository.ProdutoRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+/**
+ * Serviço de negócio para operações relacionadas a {@link Produto}.
+ *
+ * &lt;p&gt;&lt;strong&gt;O que é a camada de Service?&lt;/strong&gt;&lt;br&gt;
+ * O Service é responsável pela lógica de negócio da aplicação. Ele fica entre o
+ * Controller (que lida com HTTP) e o Repository (que acessa o banco).
+ * Essa separação de responsabilidades segue o padrão de arquitetura em camadas:
+ * &lt;pre&gt;
+ *   Controller (HTTP) → Service (regras de negócio) → Repository (banco de dados)
+ * &lt;/pre&gt;
+ *
+ * &lt;p&gt;&lt;strong&gt;{@code @Service}:&lt;/strong&gt;&lt;br&gt;
+ * É uma especialização de {@code @Component}. Indica semanticamente que esta classe
+ * contém lógica de negócio. O Spring a detecta no escaneamento de componentes.
+ *
+ * &lt;p&gt;&lt;strong&gt;{@code @Transactional}:&lt;/strong&gt;&lt;br&gt;
+ * Garante que operações de escrita (create, update, delete) sejam executadas dentro
+ * de uma transação de banco de dados. Se ocorrer qualquer exceção em runtime, a
+ * transação é automaticamente revertida (rollback), preservando a consistência dos dados.
+ *
+ * @author DSC - UFPB Campus IV
+ */
+@Service
+// @Transactional(readOnly = true) como padrão da classe melhora performance em leituras,
+// pois informa ao banco que não haverá escrita nesta transação.
+@Transactional(readOnly = true)
+public class ProdutoService {
+
+    // Injeção de dependência via construtor — prática recomendada pelo Spring e mais testável
+    private final ProdutoRepository produtoRepository;
+
+    /**
+     * Construtor com injeção de dependência.
+     *
+     * &lt;p&gt;Quando há apenas um construtor, o {@code @Autowired} é opcional a partir do Spring 4.3.
+     * A injeção via construtor é preferível à injeção via campo ({@code @Autowired} no campo)
+     * porque torna as dependências explícitas e facilita os testes unitários com Mockito.
+     *
+     * @param produtoRepository repositório JPA de produtos
+     */
+<span class="fc" id="L53">    public ProdutoService(ProdutoRepository produtoRepository) {</span>
+<span class="fc" id="L54">        this.produtoRepository = produtoRepository;</span>
+<span class="fc" id="L55">    }</span>
+
+    /**
+     * Lista todos os produtos com paginação.
+     *
+     * &lt;p&gt;Utiliza {@code @Transactional(readOnly = true)} herdado da classe,
+     * otimizando a performance pois o banco sabe que não precisa rastrear mudanças.
+     *
+     * @param pageable configuração de página, tamanho e ordenação
+     * @return página de produtos
+     */
+    public Page&lt;Produto&gt; listar(Pageable pageable) {
+<span class="fc" id="L67">        return produtoRepository.findAll(pageable);</span>
+    }
+
+    /**
+     * Busca produtos pelo nome (parcial, sem distinção de maiúsculas/minúsculas).
+     * Se a busca estiver vazia, retorna todos os produtos.
+     *
+     * @param busca    texto para filtrar por nome (pode ser nulo ou vazio)
+     * @param pageable configuração de paginação
+     * @return página de produtos filtrados
+     */
+    public Page&lt;Produto&gt; buscar(String busca, Pageable pageable) {
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        if (!StringUtils.hasText(busca)) {</span>
+<span class="fc" id="L80">            return produtoRepository.findAll(pageable);</span>
+        }
+<span class="fc" id="L82">        return produtoRepository.findByNomeContainingIgnoreCase(busca.trim(), pageable);</span>
+    }
+
+    /**
+     * Busca um produto pelo seu ID.
+     *
+     * &lt;p&gt;{@code orElseThrow} é um método do {@code Optional&lt;T&gt;} que retorna o valor
+     * se presente, ou lança a exceção fornecida caso contrário.
+     *
+     * @param id identificador do produto
+     * @return produto encontrado
+     * @throws ProdutoNaoEncontradoException se nenhum produto for encontrado com o ID informado
+     */
+    public Produto buscarPorId(Long id) {
+<span class="fc" id="L96">        return produtoRepository.findById(id)</span>
+<span class="fc" id="L97">                .orElseThrow(() -&gt; new ProdutoNaoEncontradoException(id));</span>
+    }
+
+    /**
+     * Cria um novo produto a partir dos dados do formulário.
+     *
+     * &lt;p&gt;{@code @Transactional} (sem readOnly) garante que o INSERT seja
+     * feito dentro de uma transação com rollback automático em caso de erro.
+     *
+     * @param form dados validados do formulário
+     * @return produto criado e persistido com ID gerado
+     */
+    @Transactional
+    public Produto criar(ProdutoForm form) {
+<span class="fc" id="L111">        Produto produto = new Produto(</span>
+<span class="fc" id="L112">                form.nome(),</span>
+<span class="fc" id="L113">                form.descricao(),</span>
+<span class="fc" id="L114">                form.preco(),</span>
+<span class="fc" id="L115">                form.imagem()</span>
+        );
+        // O método save() do JpaRepository faz o INSERT e retorna a entidade com o ID gerado
+<span class="fc" id="L118">        return produtoRepository.save(produto);</span>
+    }
+
+    /**
+     * Atualiza os dados de um produto existente.
+     *
+     * &lt;p&gt;O padrão aqui é &quot;buscar, modificar, salvar&quot;:
+     * &lt;ol&gt;
+     *   &lt;li&gt;Busca a entidade gerenciada pelo JPA.&lt;/li&gt;
+     *   &lt;li&gt;Modifica seus campos.&lt;/li&gt;
+     *   &lt;li&gt;O JPA detecta as mudanças automaticamente (dirty checking) e faz UPDATE ao final da transação.&lt;/li&gt;
+     * &lt;/ol&gt;
+     *
+     * @param id   identificador do produto a ser atualizado
+     * @param form novos dados validados
+     * @return produto atualizado
+     * @throws ProdutoNaoEncontradoException se o produto não existir
+     */
+    @Transactional
+    public Produto atualizar(Long id, ProdutoForm form) {
+<span class="fc" id="L138">        Produto produto = buscarPorId(id);</span>
+<span class="fc" id="L139">        produto.setNome(form.nome());</span>
+<span class="fc" id="L140">        produto.setDescricao(form.descricao());</span>
+<span class="fc" id="L141">        produto.setPreco(form.preco());</span>
+<span class="fc" id="L142">        produto.setImagem(form.imagem());</span>
+        // Não precisa chamar save() explicitamente — o JPA (dirty checking) detecta a mudança
+        // e executa o UPDATE automaticamente ao final da transação
+<span class="fc" id="L145">        return produtoRepository.save(produto);</span>
+    }
+
+    /**
+     * Exclui um produto pelo ID.
+     *
+     * &lt;p&gt;Verifica se o produto existe antes de excluir, lançando exceção amigável
+     * em vez de deixar o banco retornar um erro genérico.
+     *
+     * @param id identificador do produto a ser excluído
+     * @throws ProdutoNaoEncontradoException se o produto não existir
+     */
+    @Transactional
+    public void excluir(Long id) {
+        // Verifica existência para dar mensagem de erro clara
+<span class="fc bfc" id="L160" title="All 2 branches covered.">        if (!produtoRepository.existsById(id)) {</span>
+<span class="fc" id="L161">            throw new ProdutoNaoEncontradoException(id);</span>
+        }
+<span class="fc" id="L163">        produtoRepository.deleteById(id);</span>
+<span class="fc" id="L164">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

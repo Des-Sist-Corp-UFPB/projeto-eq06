@@ -13,17 +13,30 @@
 #   docker build -f docker/Dockerfile -t mercado:latest .
 # =============================================================================
 
-# ---- Estágio 1: Build -------------------------------------------------------
+# ---- Estágio 1: Build Frontend (React) --------------------------------------
+FROM node:20-alpine AS frontend-builder
+WORKDIR /frontend
+COPY frontend/package*.json ./
+RUN npm install
+COPY frontend/ .
+RUN npm run build
+
+# ---- Estágio 2: Build Backend (Java) ---------------------------------------
 FROM maven:3.9.9-eclipse-temurin-21 AS builder
 
 WORKDIR /build
 
 # Copiar pom.xml primeiro para cache de dependências
-COPY pom.xml .
+COPY backend/pom.xml .
 RUN mvn dependency:go-offline -B -q
 
 # Copiar código-fonte e compilar
-COPY src ./src
+COPY backend/src ./src
+
+# O vite.config.js do projeto está configurado para salvar em ../src/main/resources/static
+# Então o build vai parar na raiz do container do builder, na pasta /src/main/resources/static
+COPY --from=frontend-builder /src/main/resources/static ./src/main/resources/static
+
 RUN mvn clean package -DskipTests -B -q
 
 # ---- Estágio 2: Runtime -----------------------------------------------------

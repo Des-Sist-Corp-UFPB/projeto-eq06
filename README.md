@@ -1,343 +1,184 @@
 # Sistema Mercado — Projeto Base DSC/UFPB
 
-Projeto base (boilerplate) para a disciplina **Desenvolvimento de Sistemas Corporativos**.
+Projeto para a disciplina **Desenvolvimento de Sistemas Corporativos**.
 
 **Professor**: Rodrigo Rebouças | **UFPB — Campus IV**
 
+**Alunos**:
+- Samuel César Dantas Mota. username do git: samuelcsar
+- Sabrina Gonçalves de Almeida. username do git: sabrina-goncalves-de-almeida
+
+
 ---
 
-## Tecnologias
+## Funcionalidades Implementadas
+
+Até o momento, o sistema conta com as seguintes funcionalidades:
+
+- **Autenticação e Autorização**:
+  - Tela de login inteligente com abas (tabs) independentes para **Usuário Comum** e **Administrador**.
+  - Controle de acesso no Frontend (ações restritas a administradores).
+- **Gestão de Produtos (Catálogo)**:
+  - Vitrine principal listando os produtos do banco de dados (com nome, preço, endereço e imagem).
+  - Sistema dinâmico de **Ordenação e Filtro**: permite ordenar produtos por Recentes, Menor/Maior Preço e Nome (A-Z ou Z-A).
+- **Recursos Exclusivos de Administrador**:
+  - Botão Flutuante (FAB) para cadastrar novos produtos rapidamente através de um Modal interativo.
+  - Botão de exclusão diretamente nos cards de produtos (com diálogo de confirmação).
+  - **Chatbot Gerencial IA**: Um assistente virtual inteligente integrado ao **Google Gemini 3.1 Flash Lite**, restrito a administradores. Ele utiliza injeção dinâmica de contexto do banco de dados (Data-Augmented Prompting) para responder sobre estoque e produtos em tempo real. Possui regras estritas de segurança (Guardrails NLP) para prevenir ataques de *Prompt Injection* e bloquear sumariamente assuntos fora do escopo corporativo do PBX.
+
+---
+
+## Sistema de Auditoria (Audit Logs)
+
+O sistema conta com uma infraestrutura de auditoria transparente para rastrear as ações dos usuários, garantindo um histórico de atividades seguro sem acoplar regras de auditoria diretamente nas lógicas de negócio.
+
+### O que é auditado?
+O sistema intercepta e grava automaticamente eventos de **Sucesso** ou **Falha** nas seguintes ações:
+- **Autenticação**: Tentativas de acesso ao sistema (`USER_LOGIN`).
+- **Gerenciamento de Produtos**: Criação (`CRIAR_PRODUTO`), atualização (`ATUALIZAR_PRODUTO`) e remoção de produtos (`EXCLUIR_PRODUTO`).
+- **Ações de Usuário**: Inclusão (`ADD_FAVORITO`) e exclusão (`REMOVE_FAVORITO`) de produtos na lista de favoritos.
+
+### Como funciona sob o capô?
+A implementação foi feita utilizando o paradigma **AOP (Programação Orientada a Aspectos)** integrado ao Spring Boot:
+1. **Anotação `@AuditAction`**: Marcamos os endpoints REST (nos Controllers) que desejamos rastrear.
+2. **Interceptação (Aspecto)**: O `AuditAspect` "ouve" (intercepta) essas chamadas. Após a execução do método (seja sucesso ou exceção), ele entra em ação.
+3. **Coleta de Dados**: O Aspecto extrai dados importantes do contexto em tempo real: qual usuário está logado (pelo Spring Security), o IP da requisição, a classe, o método executado e o payload (argumentos) passados.
+4. **Armazenamento**: Esses dados são serializados e salvos na tabela dedicada `audit_log` (gerenciada por uma migração automática do Flyway).
+
+### Acesso ao Painel de Auditoria
+A aplicação fornece uma interface dedicada para administradores visualizarem o histórico de auditoria:
+1. Logue na plataforma utilizando a aba **Administrador** (Email: `admin`, Senha: `admin123`).
+2. No menu superior (cabeçalho), clique no **Ícone de Escudo** (`FiShield`).
+3. Você será redirecionado ao Painel de Auditoria (`/auditoria`), onde os logs são apresentados em tempo real (paginados), destacando com cores os sucessos e falhas, além de revelar detalhes como horário, usuário e endereço de IP da requisição.
+
+---
+
+## Tecnologias Utilizadas
 
 | Camada | Tecnologia |
 |--------|-----------|
 | Backend | Java 21 + Spring Boot 3.4.5 |
-| Templates | Thymeleaf + HTMX 2.0 |
-| Frontend | Bootstrap 5.3 |
-| Banco | PostgreSQL 16 |
+| Frontend | React 18 + Vite |
+| Roteamento | React Router DOM v7 |
+| Estilização | Vanilla CSS |
+| Inteligência Artificial | Google Gemini API (gemini-3.1-flash-lite) + Prompt Guardrails |
+| Banco de Dados | PostgreSQL 16 |
 | Migrações | Flyway 11 |
 | Segurança | Spring Security 6 |
-| Build | Maven 3.9 |
-| CI/CD | GitHub Actions |
+| Auditoria | Spring AOP + AspectJ |
+| Build e Gerenciamento | Maven 3.9 (Back) / npm (Front) |
+| Containerização | Docker + Docker Compose |
+| CI/CD e Segurança | GitHub Actions + Trivy + OWASP Dependency Check |
 
 ---
 
-## Guia de Instalação para Alunos
+## Integração com Serviço Externo
 
-### Passo 1 — Instale o Java 21
+O sistema está integrado à API de inteligência artificial do **Google Gemini** para disponibilizar assistentes virtuais de conversação tanto para clientes comuns (dúvidas sobre o projeto) quanto para administradores (gestão de estoque e inventário).
 
-O projeto requer Java 21. Recomendamos o **Eclipse Temurin** (distribuição gratuita da Adoptium).
+- **Serviço Externo**: Google Gemini API (modelos `gemini-3.1-flash-lite` e `gemini-2.5-flash`).
+- **Funcionalidade**: 
+  - Chatbot para administradores com injeção de contexto do banco de dados local (quantidade de produtos e valor estimado em estoque) e guardrails para evitar *prompt injection*.
+  - Chatbot para usuários comuns nas telas de chat para dúvidas gerais sobre os produtos.
+- **Classes Participantes (Backend)**:
+  - [GeminiService](file:///c:/Users/samuel.dantas/Downloads/projeto-eq06/backend/src/main/java/br/ufpb/dsc/mercado/service/GeminiService.java) - Serviço que realiza as requisições REST para a API do Google Gemini.
+  - [AdminChatController](file:///c:/Users/samuel.dantas/Downloads/projeto-eq06/backend/src/main/java/br/ufpb/dsc/mercado/controller/AdminChatController.java) - Endpoint REST de chat gerencial (`/api/admin/chat`) com injeção de contexto e guardrails de NLP.
+  - [ChatIAController](file:///c:/Users/samuel.dantas/Downloads/projeto-eq06/backend/src/main/java/br/ufpb/dsc/mercado/controller/ChatIAController.java) - Endpoint REST de chat comum com IA (`/api/chat/ia`).
+  - [GeminiResponse](file:///c:/Users/samuel.dantas/Downloads/projeto-eq06/backend/src/main/java/br/ufpb/dsc/mercado/dto/GeminiResponse.java) - DTO de mapeamento de resposta JSON do Gemini.
+- **Configuração**:
+  - A integração requer a definição da variável de ambiente **`GEMINI_API_KEY`**, configurada nos arquivos `application.yml`, `application-dev.yml` e `application-prod.yml`.
 
-**Windows / macOS / Linux:**
-1. Acesse https://adoptium.net/temurin/releases/?version=21
-2. Baixe o instalador para seu sistema operacional
-3. Execute o instalador e siga as instruções
+---
 
-**Verificar se está correto:**
+## Como Executar o Projeto
+
+**1. Clone o repositório:**
 ```bash
-java -version
-# Esperado: openjdk version "21.x.x" ...
+git clone <url-do-repositorio>
+cd projeto-eq06
 ```
 
-> **Dica para Windows:** durante a instalação, marque a opção *"Add to PATH"* e *"Set JAVA_HOME"*.
-
----
-
-### Passo 2 — Instale o Maven
-
-O Maven é a ferramenta de build do projeto.
-
-**macOS (com Homebrew):**
+**2. Suba a aplicação via Docker (Recomendado):**
 ```bash
-brew install maven
+docker compose -f docker/docker-compose.dev.yml up --build -d
 ```
 
-**Windows:**
-1. Acesse https://maven.apache.org/download.cgi
-2. Baixe o arquivo `apache-maven-3.x.x-bin.zip`
-3. Extraia para uma pasta (ex.: `C:\maven`)
-4. Adicione `C:\maven\bin` à variável de ambiente `PATH`
+**3. Acesse no navegador:**
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:8080
+- **Banco de Dados (Adminer)**: http://localhost:8888
 
-**Linux (Ubuntu/Debian):**
+---
+
+## Como Executar os Testes Automatizados e Relatórios de Cobertura
+
+O projeto exige uma cobertura de testes de no mínimo **85%** em ambas as camadas (Backend e Frontend). Atualmente, a cobertura atinge os seguintes patamares:
+
+- **Backend**: **93.87%** de cobertura de linhas (91.71% de cobertura de instruções).
+  - Relatório JaCoCo: [cobertura/backend/index.html](file:///c:/Users/samuel.dantas/Downloads/projeto-eq06/cobertura/backend/index.html)
+- **Frontend**: **93.97%** de cobertura de linhas (93.01% de cobertura de statements).
+  - Relatório Vitest: [cobertura/frontend/index.html](file:///c:/Users/samuel.dantas/Downloads/projeto-eq06/cobertura/frontend/index.html)
+
+### 1. Backend (Java 21/25 + Spring Boot)
+Os testes do backend utilizam **JUnit 5**, **Mockito** e **Testcontainers** para testes de integração com banco real. Devido ao ambiente executar Java 25, o build está configurado para habilitar propriedades experimentais do Byte Buddy no Surefire.
+
+Para rodar os testes e gerar o relatório JaCoCo:
 ```bash
-sudo apt install maven
+# Na pasta backend do projeto:
+cd backend
+mvn clean test jacoco:report
 ```
+O relatório final gerado pelo JaCoCo é exportado para `target/site/jacoco/`. Para submetê-lo, copiamos para `cobertura/backend/`.
 
-**Verificar:**
+### 2. Frontend (React + Vite)
+Os testes do frontend utilizam **Vitest** e **React Testing Library (RTL)**.
+
+Para instalar as dependências (primeira execução):
 ```bash
-mvn -version
-# Esperado: Apache Maven 3.x.x
+cd frontend
+npm install
 ```
 
----
-
-### Passo 3 — Instale o Docker Desktop
-
-O Docker sobe o banco de dados PostgreSQL sem precisar instalar nada manualmente.
-
-1. Acesse https://www.docker.com/products/docker-desktop/
-2. Baixe e instale o Docker Desktop para seu sistema
-3. Abra o Docker Desktop e aguarde ele inicializar (ícone na barra de tarefas)
-
-**Verificar:**
+Para rodar os testes com o cálculo de cobertura:
 ```bash
-docker -v
-# Esperado: Docker version 27.x.x ...
+npm run coverage
 ```
-
-> **Importante:** o Docker Desktop deve estar **em execução** sempre que você for rodar o projeto.
+O relatório final gerado pelo Vitest é exportado para `coverage/`. Para submetê-lo, copiamos para `cobertura/frontend/`.
 
 ---
 
-### Passo 4 — Clone o repositório
+## Teste de Carga e Performance (k6)
+
+Foi realizada uma simulação de teste de carga utilizando o **k6** para validar a performance dos endpoints mais críticos da API sob concorrência.
+
+### Detalhes do Teste
+- **Cenário**: Simulação de usuários virtuais (VUs) acessando ciclicamente as principais operações do sistema com tempo de reflexão (*think time*) de 1s.
+- **Usuários Virtuais (VUs)**: Pico variável com múltiplos testes (10 VUs, 80 VUs, 130 VUs e 200 VUs).
+- **Duração**: 1 minuto por cenário (incluindo rampa de subida, estabilização e rampa de descida).
+- **Rotas Exercitadas**:
+  - `GET /ping` (Health check)
+  - `GET /api/produtos` (Listagem do catálogo com paginação)
+  - `GET /api/produtos/{id}` (Detalhes de produto específico usando ID selecionado dinamicamente)
+  - `POST /api/auth/login` (Autenticação corporativa)
+  - `GET /api/auditoria` (Painel de logs de auditoria)
+
+### Resultados Obtidos
+A aplicação manteve **100% de estabilidade** em todos os cenários sem derrubar requisições (`http_req_failed` em 0.00%), porém a latência aumenta sob alta carga.
+
+- **Com 10 VUs (Carga Leve)**:
+  - p(95): **26.88 ms** | Média: **12.67 ms**
+- **Com 80 VUs (Carga Média)**:
+  - p(95): **192.1 ms** | Média: **343.6 ms**
+- **Com 130 VUs (Carga Alta - Pós Warm-up)**:
+  - p(95): **11.76 s** *(Gargalo e cauda longa severa)*
+  - Média: **946 ms** *(Atinge a marca de ~1 segundo)*
+- **Com 200 VUs (Stress Extremo)**:
+  - p(95): **> 5 s** | Média: **> 700 ms**
+
+**Conclusão de Capacidade:** O sistema local consegue processar perfeitamente requests com concorrência pesada sem erros, suportando o limite ideal de **90 a 100 VUs** para manter a métrica rigorosa de p(95) perto de 1 segundo. Cargas maiores se acumulam e afetam respostas (contenção de banco/threads), embora a JVM tenha apresentado forte melhoria térmica (*Warm-up*) entre os testes.
+
+### Gargalos Identificados e Sugestões de Melhoria
+1. **Ordenação de Auditoria**: O endpoint `/api/auditoria` lê logs ordenados de forma decrescente pela coluna `criadoEm`. Em cenários reais com milhares de registros, essa operação causará lentidão (*Seq Scan*). **Ação**: Criar um índice na coluna `criado_em` da tabela `audit_log` para agilizar a ordenação e paginação.
+2. **Hit Direto ao Banco no Catálogo**: A rota de listagem de produtos (`/api/produtos`) faz leituras pesadas no banco a cada carregamento de página. **Ação**: Implementar cache em memória (como Caffeine) ou cache distribuído (como Redis) para os produtos ativos, invalidando-o apenas em criações/exclusões.
 
-```bash
-git clone <URL-DO-REPOSITÓRIO>
-cd base_projeto
-```
 
-> Substitua `<URL-DO-REPOSITÓRIO>` pela URL fornecida pelo professor.
-
----
-
-### Passo 5 — Execute o projeto
-
-Você tem duas opções. **Recomendamos a Opção A para a primeira execução.**
-
-#### Opção A: Tudo com Docker (mais simples)
-
-Um único comando sobe o banco, a aplicação e o Adminer (interface web do banco):
-
-```bash
-docker compose -f docker/docker-compose.dev.yml up --build
-```
-
-Aguarde as mensagens de inicialização. Quando aparecer algo como:
-```
-Started MercadoApplication in X.XXX seconds
-```
-...a aplicação está pronta.
-
-#### Opção B: Banco no Docker + aplicação local (recomendado para desenvolvimento)
-
-Esta opção permite editar o código e ver as mudanças mais rápido:
-
-```bash
-# Terminal 1 — sobe o banco de dados
-docker compose -f docker/docker-compose.dev.yml up postgres adminer
-
-# Terminal 2 — roda a aplicação (em outro terminal, na mesma pasta)
-mvn spring-boot:run
-```
-
----
-
-### Passo 6 — Acesse no browser
-
-| O que | Endereço |
-|-------|----------|
-| Aplicação | http://localhost:8080 |
-| Login | usuário: `admin` / senha: `admin123` |
-| Adminer (banco) | http://localhost:8888 |
-| Health check | http://localhost:8080/actuator/health |
-
----
-
-### Parando o projeto
-
-```bash
-# Parar a aplicação: Ctrl+C no terminal onde está rodando
-
-# Parar os containers Docker:
-docker compose -f docker/docker-compose.dev.yml down
-```
-
----
-
-## Solução de Problemas Comuns
-
-### "Port 8080 already in use"
-Outra aplicação está usando a porta 8080. Para liberar:
-```bash
-# macOS / Linux
-lsof -ti:8080 | xargs kill
-
-# Windows (PowerShell)
-netstat -ano | findstr :8080
-# Anote o PID da última coluna e execute:
-taskkill /PID <número-do-pid> /F
-```
-
-### "Cannot connect to the Docker daemon"
-O Docker Desktop não está em execução. Abra o aplicativo Docker Desktop e aguarde inicializar.
-
-### "Connection refused" ao banco de dados
-O container do PostgreSQL ainda não subiu. Aguarde alguns segundos e tente novamente. Você pode verificar com:
-```bash
-docker compose -f docker/docker-compose.dev.yml ps
-# O container "mercado-postgres-dev" deve estar com status "healthy"
-```
-
-### Erro de compilação Java
-Verifique se o Java 21 está sendo usado pelo Maven:
-```bash
-mvn -version
-# A linha "Java version:" deve mostrar 21.x.x
-```
-Se mostrar outra versão, configure a variável `JAVA_HOME` apontando para o Java 21.
-
-### Flyway: "Found non-empty schema(s) with no schema history table"
-O banco existe mas foi criado sem as migrations. Apague os dados e recomece:
-```bash
-docker compose -f docker/docker-compose.dev.yml down -v
-docker compose -f docker/docker-compose.dev.yml up postgres
-```
-
----
-
-## Testes
-
-```bash
-# Rodar todos os testes (requer Docker em execução — usa Testcontainers)
-mvn test
-
-# Rodar com relatório de cobertura (JaCoCo)
-mvn verify
-# Relatório: abra o arquivo target/site/jacoco/index.html no browser
-```
-
----
-
-## Análise de Segurança (SAST)
-
-```bash
-# SpotBugs + FindSecBugs + OWASP Dependency Check
-mvn verify -Psecurity
-
-# Trivy: scan de vulnerabilidades no filesystem
-docker compose -f docker/docker-compose.dev.yml --profile scan up trivy
-
-# Verificar dependências desatualizadas
-mvn versions:display-dependency-updates -Pversions
-```
-
-Veja `docs/SECURITY.md` para detalhes.
-
----
-
-## Configurando o Deploy Automático (GitHub Actions)
-
-O projeto inclui um pipeline de CI/CD em `.github/workflows/deploy.yml` que:
-- roda os testes automaticamente a cada `push` na branch `main`
-- executa análise de segurança (SAST) no código e nas dependências
-- constrói a imagem Docker de produção e faz o deploy no servidor da disciplina
-
-Para ativar o deploy, você precisa configurar **dois secrets** e uma **variável** no seu repositório GitHub.
-
----
-
-### Secret 1 — Chave SSH de deploy (`SSH_DEPLOY_KEY`)
-
-O servidor da disciplina (`dsc.rodrigor.com`) já está preparado para receber deploys.
-A chave SSH que autoriza o acesso está disponível na página da disciplina:
-
-**Acesse: https://gd.dsc.rodrigor.com** e copie a chave SSH privada disponibilizada pelo professor.
-
-Depois, adicione no seu repositório:
-
-1. No GitHub, acesse seu repositório → **Settings**
-2. No menu lateral: **Secrets and variables → Actions**
-3. Clique em **New repository secret**
-4. Nome: `SSH_DEPLOY_KEY`
-5. Valor: cole a chave privada copiada do portal (o texto completo, incluindo as linhas `-----BEGIN...` e `-----END...`)
-6. Clique em **Add secret**
-
----
-
-### Secret 2 — Chave da API do NVD (`NVD_API_KEY`)
-
-#### O que é o NVD?
-
-**NVD** significa *National Vulnerability Database* — é o banco de dados oficial do governo americano (NIST) que cataloga todas as vulnerabilidades de segurança conhecidas em softwares. Cada vulnerabilidade recebe um identificador chamado **CVE** (ex.: CVE-2024-12345) e uma nota de gravidade chamada **CVSS** (de 0 a 10).
-
-O **OWASP Dependency Check** (uma das ferramentas de segurança do projeto) consulta esse banco para verificar se as bibliotecas que o seu projeto usa possuem vulnerabilidades conhecidas.
-
-#### Por que preciso de uma chave?
-
-Sem a chave, o download do banco de dados NVD é muito lento (pode levar 20+ minutos no CI/CD, ou até falhar por timeout). Com a chave gratuita, o download é feito via API e leva menos de 2 minutos.
-
-#### Como obter (gratuito, leva ~1 minuto)
-
-1. Acesse https://nvd.nist.gov/developers/request-an-api-key
-2. Preencha seu e-mail institucional (use o e-mail da UFPB se possível)
-3. Marque a caixa de uso não-comercial
-4. Clique em **Submit**
-5. Acesse seu e-mail — você receberá a chave em segundos
-
-#### Adicionando ao repositório
-
-1. No GitHub: **Settings → Secrets and variables → Actions**
-2. Clique em **New repository secret**
-3. Nome: `NVD_API_KEY`
-4. Valor: cole a chave recebida por e-mail
-5. Clique em **Add secret**
-
-> **Sem a chave ainda?** O pipeline funciona mesmo sem ela, mas o OWASP Dependency Check
-> pode demorar muito ou falhar por timeout. Configure assim que possível.
-
----
-
-### Variável — Nome da imagem Docker (`APP_IMAGE`)
-
-O pipeline publica a imagem Docker no GitHub Container Registry (GHCR) com o nome do seu repositório. Você não precisa configurar isso manualmente — o workflow usa `${{ github.repository }}` para montar o nome automaticamente.
-
-Mas o arquivo `.env` no servidor precisa saber qual imagem usar. O script de deploy atualiza isso automaticamente na primeira execução.
-
----
-
-### Verificando se o deploy funcionou
-
-Após configurar os secrets e fazer um `push` na branch `main`:
-
-1. No GitHub, clique na aba **Actions**
-2. Você verá o workflow **"Build & Deploy"** em execução
-3. Ele tem 3 etapas: **Testes e SAST → Build e push → Deploy em produção**
-4. Se tudo der certo, a aplicação estará disponível em `https://dsc.rodrigor.com`
-
-Se alguma etapa falhar, clique nela para ver os logs detalhados.
-
----
-
-## Estrutura do Projeto
-
-```
-base_projeto/
-├── .github/workflows/
-│   └── deploy.yml           # Pipeline CI/CD (GitHub Actions)
-├── src/main/java/br/ufpb/dsc/mercado/
-│   ├── config/              # Configurações (Security, GlobalModelAttributes, etc.)
-│   ├── controller/          # Controllers HTTP + HTMX
-│   ├── domain/              # Entidades JPA
-│   ├── dto/                 # Data Transfer Objects (Records)
-│   ├── exception/           # Exceções de domínio
-│   ├── repository/          # Interfaces Spring Data JPA
-│   └── service/             # Lógica de negócio
-├── src/main/resources/
-│   ├── db/migration/        # Scripts Flyway (V1__, V2__, ...)
-│   └── templates/           # Templates Thymeleaf
-├── docker/                  # Dockerfiles + docker-compose
-├── docs/                    # Documentação técnica
-├── CLAUDE.md                # Memória para Claude Code
-└── pom.xml
-```
-
----
-
-## Para Alunos: Adaptando o Boilerplate
-
-1. **Renomear** a entidade `Produto` para sua entidade principal
-2. **Criar migration** Flyway com a nova estrutura da tabela (`src/main/resources/db/migration/V2__...sql`)
-3. **Atualizar** Repository, Service, Controller e templates seguindo os mesmos padrões
-4. **Manter** a estrutura de pacotes e convenções (ver `docs/CONVENTIONS.md`)
-5. **Nunca editar** migrations já aplicadas — sempre criar uma nova (`V3__`, `V4__`, ...)
-
-> Dúvidas? Consulte a documentação em `docs/` ou o professor.

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProdutoController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mercado</a> &gt; <a href="index.source.html" class="el_package">br.ufpb.dsc.mercado.controller</a> &gt; <span class="el_source">ProdutoController.java</span></div><h1>ProdutoController.java</h1><pre class="source lang-java linenums">package br.ufpb.dsc.mercado.controller;
+
+import br.ufpb.dsc.mercado.domain.Produto;
+import br.ufpb.dsc.mercado.dto.ProdutoForm;
+import br.ufpb.dsc.mercado.service.ProdutoService;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import br.ufpb.dsc.mercado.aspect.AuditAction;
+
+/**
+ * REST Controller para operações de produtos.
+ */
+@RestController
+@RequestMapping(&quot;/api/produtos&quot;)
+public class ProdutoController {
+
+    private static final int TAMANHO_PAGINA = 10;
+
+    private final ProdutoService produtoService;
+
+<span class="fc" id="L26">    public ProdutoController(ProdutoService produtoService) {</span>
+<span class="fc" id="L27">        this.produtoService = produtoService;</span>
+<span class="fc" id="L28">    }</span>
+
+    @GetMapping
+    public ResponseEntity&lt;Page&lt;Produto&gt;&gt; listar(
+            @RequestParam(name = &quot;busca&quot;, required = false, defaultValue = &quot;&quot;) String busca,
+            @RequestParam(name = &quot;pagina&quot;, defaultValue = &quot;0&quot;) int pagina) {
+
+<span class="fc" id="L35">        PageRequest pageRequest = PageRequest.of(pagina, TAMANHO_PAGINA, Sort.by(&quot;nome&quot;).ascending());</span>
+<span class="fc" id="L36">        Page&lt;Produto&gt; produtos = produtoService.buscar(busca, pageRequest);</span>
+
+<span class="fc" id="L38">        return ResponseEntity.ok(produtos);</span>
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Produto&gt; buscarPorId(@PathVariable Long id) {
+<span class="fc" id="L43">        Produto produto = produtoService.buscarPorId(id);</span>
+<span class="fc" id="L44">        return ResponseEntity.ok(produto);</span>
+    }
+
+    @PostMapping
+    @AuditAction(&quot;CRIAR_PRODUTO&quot;)
+    public ResponseEntity&lt;Produto&gt; criar(@Valid @RequestBody ProdutoForm form) {
+<span class="fc" id="L50">        Produto novoProduto = produtoService.criar(form);</span>
+<span class="fc" id="L51">        return ResponseEntity.status(HttpStatus.CREATED).body(novoProduto);</span>
+    }
+
+    @PutMapping(&quot;/{id}&quot;)
+    @AuditAction(&quot;ATUALIZAR_PRODUTO&quot;)
+    public ResponseEntity&lt;Produto&gt; atualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody ProdutoForm form) {
+
+<span class="fc" id="L60">        Produto produtoAtualizado = produtoService.atualizar(id, form);</span>
+<span class="fc" id="L61">        return ResponseEntity.ok(produtoAtualizado);</span>
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    @AuditAction(&quot;EXCLUIR_PRODUTO&quot;)
+    public ResponseEntity&lt;Void&gt; excluir(@PathVariable Long id) {
+<span class="fc" id="L67">        produtoService.excluir(id);</span>
+<span class="fc" id="L68">        return ResponseEntity.noContent().build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
