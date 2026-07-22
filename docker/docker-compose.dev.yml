@@ -53,6 +53,12 @@ services:
       SPRING_DATASOURCE_USERNAME: mercado
       SPRING_DATASOURCE_PASSWORD: mercado123
       GEMINI_API_KEY: ${GEMINI_API_KEY}
+      OTEL_SERVICE_NAME: eq06-projeto
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-lgtm:4318
+      OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_METRICS_EXPORTER: otlp
+      OTEL_LOGS_EXPORTER: otlp
     ports:
       - "8080:8080"
     volumes:
@@ -111,6 +117,19 @@ services:
       - ..:/project:ro
       - trivy-cache:/root/.cache/trivy
     command: fs /project --severity HIGH,CRITICAL --exit-code 1
+    networks:
+      - mercado-net
+
+  # ---------------------------------------------------------------------------
+  # OpenTelemetry LGTM (Loki, Grafana, Tempo, Mimir)
+  # ---------------------------------------------------------------------------
+  otel-lgtm:
+    image: grafana/otel-lgtm
+    container_name: otel-lgtm
+    ports:
+      - "3000:3000"   # Grafana (interface web)
+      - "4317:4317"   # OTLP via gRPC
+      - "4318:4318"   # OTLP via HTTP
     networks:
       - mercado-net
 

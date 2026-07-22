@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import io.opentelemetry.instrumentation.annotations.WithSpan;
+import io.opentelemetry.instrumentation.annotations.SpanAttribute;
+
 /**
  * Serviço de negócio para operações relacionadas a {@link Produto}.
  *
@@ -92,7 +95,8 @@ public class ProdutoService {
      * @return produto encontrado
      * @throws ProdutoNaoEncontradoException se nenhum produto for encontrado com o ID informado
      */
-    public Produto buscarPorId(Long id) {
+    @WithSpan("buscar-produto-id")
+    public Produto buscarPorId(@SpanAttribute("produto.id") Long id) {
         return produtoRepository.findById(id)
                 .orElseThrow(() -> new ProdutoNaoEncontradoException(id));
     }
@@ -107,7 +111,8 @@ public class ProdutoService {
      * @return produto criado e persistido com ID gerado
      */
     @Transactional
-    public Produto criar(ProdutoForm form) {
+    @WithSpan("criar-produto")
+    public Produto criar(@SpanAttribute("produto.form") ProdutoForm form) {
         Produto produto = new Produto(
                 form.nome(),
                 form.descricao(),
