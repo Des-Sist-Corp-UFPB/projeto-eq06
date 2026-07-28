@@ -16,7 +16,7 @@ const CriarConta = () => {
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (senha !== confirmarSenha) {
@@ -25,31 +25,34 @@ const CriarConta = () => {
     }
 
     const novoUsuario = {
-      name: nome,
+      nome: nome,
       email: email,
       cpf: cpf,
-      password: senha
+      senha: senha
     };
 
-    const success = handleRegister(novoUsuario);
-    
-    if (success) {
-      alert("Conta criada com sucesso!");
-      navigate("/login");
-    }
-  };
+    try {
+      const response = await fetch('/api/usuarios', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(novoUsuario)
+      });
 
-  const handleRegister = (newUserData) => {
-    const users = JSON.parse(localStorage.getItem("users_list") || "[]");
-    
-    if(users.find(u => u.email === newUserData.email)) {
-        alert("Este email já está cadastrado!");
-        return false;
+      if (response.ok) {
+        alert("Conta criada com sucesso!");
+        navigate("/login");
+      } else if (response.status === 400) {
+        const erroMsg = await response.text();
+        alert(erroMsg || "Verifique os dados preenchidos.");
+      } else {
+        alert("Erro no servidor. Tente novamente mais tarde.");
+      }
+    } catch (err) {
+      console.error("Erro ao criar conta:", err);
+      alert("Falha ao comunicar com o servidor.");
     }
-
-    users.push(newUserData);
-    localStorage.setItem("users_list", JSON.stringify(users));
-    return true;
   };
 
   return (

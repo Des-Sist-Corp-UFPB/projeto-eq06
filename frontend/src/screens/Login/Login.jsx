@@ -119,7 +119,18 @@ export default function Login() {
         </div>
       </div>
 
-      <p className="forgot">Esqueceu sua senha?</p>
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <p className="forgot" style={{ marginBottom: '10px' }}>Esqueceu sua senha?</p>
+        <p style={{ color: 'var(--text-gray)' }}>
+          Ainda não tem uma conta?{' '}
+          <span 
+            style={{ color: 'var(--accent)', cursor: 'pointer', fontWeight: 'bold' }}
+            onClick={() => navigate('/criar-conta')}
+          >
+            Criar Conta
+          </span>
+        </p>
+      </div>
     </div>
   );
 }

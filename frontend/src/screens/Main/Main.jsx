@@ -93,19 +93,29 @@ const Main = () => {
         setIsModalOpen(false);
     };
 
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setCurrentBanner((prev) => (prev + 1) % bannerImages.length);
-        }, 5000);
-
-        // Fetch products from API
-        fetch('/api/produtos')
+    const fetchProdutos = (query = "") => {
+        fetch(`/api/produtos?busca=${encodeURIComponent(query)}`)
             .then(res => res.json())
             .then(data => {
                 if (data.content) setProductsData(data.content);
                 else if (Array.isArray(data)) setProductsData(data);
             })
             .catch(err => console.error("Erro ao buscar produtos:", err));
+    };
+
+    const handleSearch = (query) => {
+        fetchProdutos(query);
+    };
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentBanner((prev) => (prev + 1) % bannerImages.length);
+        }, 5000);
+        return () => clearInterval(timer);
+    }, []);
+
+    useEffect(() => {
+        fetchProdutos();
 
         if (user && user.id) {
             fetch(`/api/usuarios/${user.id}/favoritos`)
@@ -117,14 +127,12 @@ const Main = () => {
                 })
                 .catch(err => console.error("Erro ao buscar favoritos:", err));
         }
-
-        return () => clearInterval(timer);
     }, [user]);
 
     return (
         <div className="pbx-container">
             <ToastContainer position="top-right" autoClose={3000} />
-            <Header />
+            <Header onSearch={handleSearch} />
             <section
                 className="hero"
                 style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${bannerImages[currentBanner]})` }}
