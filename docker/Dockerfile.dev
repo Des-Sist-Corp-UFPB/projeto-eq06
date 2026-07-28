@@ -23,7 +23,10 @@ RUN mvn dependency:go-offline -B
 # O restante do código-fonte é montado via volume no docker-compose.
 # Isso permite hot-reload sem reconstruir a imagem.
 
+# Baixar o agente do OpenTelemetry
+RUN curl -L -o /app/opentelemetry-javaagent.jar https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar
+
 EXPOSE 8080
 
 # Spring DevTools requer o argumento -Dspring-boot.run.fork=false para funcionar em container
-CMD ["mvn", "spring-boot:run", "-Dspring-boot.run.jvmArguments=-Dspring.profiles.active=dev"]
+CMD ["mvn", "spring-boot:run", "-Dspring-boot.run.jvmArguments=-Dspring.profiles.active=dev -javaagent:/app/opentelemetry-javaagent.jar"]
