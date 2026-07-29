@@ -67,7 +67,6 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD wget -qO- http://localhost:8080/actuator/health || exit 1
 
-# Forçar as variáveis do OpenTelemetry direto na imagem (Plano B)
 # Isso contorna a necessidade de atualizar o docker-compose.prod.yml no servidor manualmente
 ENV OTEL_SERVICE_NAME=dsc-eq06
 ENV OTEL_EXPORTER_OTLP_ENDPOINT=https://otel.dsc.rodrigor.com
