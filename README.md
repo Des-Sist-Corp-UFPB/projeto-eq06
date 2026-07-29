@@ -90,6 +90,23 @@ O sistema está integrado à API de inteligência artificial do **Google Gemini*
 
 ---
 
+## Observabilidade e Telemetria
+
+O sistema conta com monitoramento em tempo real tanto no Frontend quanto no Backend, utilizando ferramentas de observabilidade para captura de métricas, traces e análise de tráfego.
+
+### Backend (OpenTelemetry + Grafana)
+A API Spring Boot foi instrumentada para exportar telemetria nativa utilizando o **Agente Java do OpenTelemetry**.
+- **Como foi feito**: O agente (`opentelemetry-javaagent.jar`) é baixado e injetado automaticamente através de um parâmetro `-javaagent` no JVM durante a execução das imagens Docker (`Dockerfile` de produção e `Dockerfile.dev`).
+- **O que é coletado**: O agente intercepta requisições REST recebidas, chamadas do Spring Data JPA e conexões JDBC com o PostgreSQL, transformando-as em *Spans* que formam o *Trace* da requisição. Também existem métodos chave do negócio instrumentados manualmente com `@WithSpan`.
+- **Destino**: A aplicação empurra (push) os dados via protocolo OTLP para o backend de observabilidade da disciplina (Stack LGTM: Loki, Grafana, Tempo e Prometheus). As métricas da equipe são isoladas através da configuração da variável `OTEL_SERVICE_NAME` (ex: `dsc-eq06`).
+
+### Frontend (Umami Analytics)
+Para acompanhar a utilização da interface e o tráfego de acesso, integramos o **Umami**, uma ferramenta de *Web Analytics* Open Source com foco em privacidade.
+- **Como foi feito**: A integração ocorre pela adição do script de rastreamento no arquivo `index.html` do Vite/React (`<script defer src=".../script.js" data-website-id="...">`).
+- **O que é coletado**: O Umami captura automaticamente métricas como visualizações de página (integrado via API de History da Single Page Application), tempo de permanência, origens de tráfego e dispositivo utilizado, tudo de forma anônima e sem uso invasivo de cookies.
+
+---
+
 ## Como Executar o Projeto
 
 **1. Clone o repositório:**
