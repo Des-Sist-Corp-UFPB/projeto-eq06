@@ -55,8 +55,8 @@ COPY --from=builder /build/target/*.jar app.jar
 # Baixar o agente do OpenTelemetry
 RUN wget -qO opentelemetry-javaagent.jar https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar
 
-# Definir owner do arquivo
-RUN chown mercado:mercado app.jar opentelemetry-javaagent.jar
+# Definir owner do arquivo e da pasta do app
+RUN mkdir -p /app/uploads && chown -R mercado:mercado /app
 
 # Trocar para usuário não-root
 USER mercado

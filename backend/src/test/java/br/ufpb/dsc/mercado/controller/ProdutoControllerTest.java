@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.mock.web.MockMultipartFile;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -70,30 +71,43 @@ class ProdutoControllerTest {
 
     @Test
     void criar_deveRetornarProdutoCriado() throws Exception {
-        ProdutoForm form = new ProdutoForm("Novo", "Desc", new BigDecimal("20.0"), null);
+        ProdutoForm formValido = new ProdutoForm("Novo", "Desc", new BigDecimal("20.0"), null);
         Produto novo = new Produto("Novo", "Desc", new BigDecimal("20.0"));
         novo.setId(2L);
 
-        when(produtoService.criar(any(ProdutoForm.class))).thenReturn(novo);
+        when(produtoService.criar(any(ProdutoForm.class), eq(null))).thenReturn(novo);
 
-        mockMvc.perform(post("/api/produtos")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(form)))
+        MockMultipartFile jsonFile = new MockMultipartFile("produto", "", "application/json", objectMapper.writeValueAsString(formValido).getBytes());
+
+        mockMvc.perform(multipart("/api/produtos")
+                .file(jsonFile)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .header("X-User-Email", "teste@ufpb.br"))
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(2L))
                 .andExpect(jsonPath("$.nome").value("Novo"));
     }
 
     @Test
     void atualizar_deveRetornarProdutoAtualizado() throws Exception {
-        ProdutoForm form = new ProdutoForm("Atualizado", "Desc", new BigDecimal("20.0"), null);
+        ProdutoForm formValido = new ProdutoForm("Atualizado", "Desc", new BigDecimal("20.0"), null);
         Produto atualizado = new Produto("Atualizado", "Desc", new BigDecimal("20.0"));
         atualizado.setId(1L);
 
-        when(produtoService.atualizar(eq(1L), any(ProdutoForm.class))).thenReturn(atualizado);
+        when(produtoService.atualizar(eq(1L), any(ProdutoForm.class), eq(null))).thenReturn(atualizado);
 
-        mockMvc.perform(put("/api/produtos/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(form)))
+        MockMultipartFile jsonFile = new MockMultipartFile("produto", "", "application/json", objectMapper.writeValueAsString(formValido).getBytes());
+
+        var multipartRequest = multipart("/api/produtos/1");
+        multipartRequest.with(request -> {
+            request.setMethod("PUT");
+            return request;
+        });
+
+        mockMvc.perform(multipartRequest
+                .file(jsonFile)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .header("X-User-Email", "teste@ufpb.br"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.nome").value("Atualizado"));
     }

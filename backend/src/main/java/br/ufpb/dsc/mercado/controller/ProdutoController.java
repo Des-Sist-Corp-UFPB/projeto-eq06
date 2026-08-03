@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import br.ufpb.dsc.mercado.aspect.AuditAction;
 
 /**
@@ -44,20 +45,23 @@ public class ProdutoController {
         return ResponseEntity.ok(produto);
     }
 
-    @PostMapping
+    @PostMapping(consumes = {"multipart/form-data"})
     @AuditAction("CRIAR_PRODUTO")
-    public ResponseEntity<Produto> criar(@Valid @RequestBody ProdutoForm form) {
-        Produto novoProduto = produtoService.criar(form);
+    public ResponseEntity<Produto> criar(
+            @RequestPart("produto") @Valid ProdutoForm form,
+            @RequestPart(value = "imagem", required = false) MultipartFile imagem) {
+        Produto novoProduto = produtoService.criar(form, imagem);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoProduto);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = {"multipart/form-data"})
     @AuditAction("ATUALIZAR_PRODUTO")
     public ResponseEntity<Produto> atualizar(
             @PathVariable Long id,
-            @Valid @RequestBody ProdutoForm form) {
+            @RequestPart("produto") @Valid ProdutoForm form,
+            @RequestPart(value = "imagem", required = false) MultipartFile imagem) {
 
-        Produto produtoAtualizado = produtoService.atualizar(id, form);
+        Produto produtoAtualizado = produtoService.atualizar(id, form, imagem);
         return ResponseEntity.ok(produtoAtualizado);
     }
 

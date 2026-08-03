@@ -8,7 +8,7 @@ export default function ProdutoModal({ onClose, onProductCreated }) {
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
   const [preco, setPreco] = useState("");
-  const [imagem, setImagem] = useState("");
+  const [imagemFile, setImagemFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useContext(AuthContext);
 
@@ -23,18 +23,24 @@ export default function ProdutoModal({ onClose, onProductCreated }) {
     setIsLoading(true);
 
     try {
+      const formData = new FormData();
+      formData.append("produto", new Blob([JSON.stringify({
+        nome: nome,
+        descricao: descricao,
+        preco: parseFloat(preco)
+      })], { type: "application/json" }));
+      
+      if (imagemFile) {
+        formData.append("imagem", imagemFile);
+      }
+
       const response = await fetch('/api/produtos', {
         method: 'POST',
         headers: { 
-            'Content-Type': 'application/json',
+            // Omitindo Content-Type para o navegador setar multipart/form-data corretamente
             'X-User-Email': user?.email || 'anonymous'
         },
-        body: JSON.stringify({
-          nome: nome,
-          descricao: descricao,
-          preco: parseFloat(preco),
-          imagem: imagem || null
-        })
+        body: formData
       });
 
       if (response.ok) {
@@ -95,12 +101,11 @@ export default function ProdutoModal({ onClose, onProductCreated }) {
           </div>
 
           <div className="form-group">
-            <label>URL da Imagem (Opcional)</label>
+            <label>Imagem do Produto (Opcional)</label>
             <input 
-              type="text" 
-              placeholder="https://exemplo.com/foto.jpg" 
-              value={imagem}
-              onChange={(e) => setImagem(e.target.value)}
+              type="file" 
+              accept="image/*"
+              onChange={(e) => setImagemFile(e.target.files[0])}
             />
           </div>
 

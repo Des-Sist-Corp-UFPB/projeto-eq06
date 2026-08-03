@@ -173,7 +173,7 @@ class ProdutoServiceTest {
         when(produtoRepository.save(any(Produto.class))).thenReturn(produtoSalvo);
 
         // WHEN
-        Produto resultado = produtoService.criar(formValido);
+        Produto resultado = produtoService.criar(formValido, null);
 
         // THEN
         assertThat(resultado).isNotNull();
@@ -199,7 +199,7 @@ class ProdutoServiceTest {
         ProdutoForm formAtualizado = new ProdutoForm("Arroz Branco", "Arroz branco tipo 1", new BigDecimal("5.99"), null);
 
         // WHEN
-        Produto resultado = produtoService.atualizar(1L, formAtualizado);
+        Produto resultado = produtoService.atualizar(1L, formAtualizado, null);
 
         // THEN
         assertThat(resultado.getNome()).isEqualTo("Arroz Branco");
@@ -216,7 +216,7 @@ class ProdutoServiceTest {
         when(produtoRepository.findById(99L)).thenReturn(Optional.empty());
 
         // WHEN + THEN
-        assertThatThrownBy(() -> produtoService.atualizar(99L, formValido))
+        assertThatThrownBy(() -> produtoService.atualizar(99L, formValido, null))
                 .isInstanceOf(ProdutoNaoEncontradoException.class);
 
         // Verifica que save() NUNCA foi chamado (produto não existe, não deve salvar)

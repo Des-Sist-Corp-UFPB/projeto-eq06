@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.opentelemetry.instrumentation.annotations.SpanAttribute;
@@ -41,8 +42,8 @@ import io.opentelemetry.instrumentation.annotations.SpanAttribute;
 @Transactional(readOnly = true)
 public class ProdutoService {
 
-    // Injeção de dependência via construtor — prática recomendada pelo Spring e mais testável
     private final ProdutoRepository produtoRepository;
+    private final FileStorageService fileStorageService;
 
     /**
      * Construtor com injeção de dependência.
@@ -52,9 +53,11 @@ public class ProdutoService {
      * porque torna as dependências explícitas e facilita os testes unitários com Mockito.
      *
      * @param produtoRepository repositório JPA de produtos
+     * @param fileStorageService serviço para upload de arquivos
      */
-    public ProdutoService(ProdutoRepository produtoRepository) {
+    public ProdutoService(ProdutoRepository produtoRepository, FileStorageService fileStorageService) {
         this.produtoRepository = produtoRepository;
+        this.fileStorageService = fileStorageService;
     }
 
     /**
@@ -112,12 +115,17 @@ public class ProdutoService {
      */
     @Transactional
     @WithSpan("criar-produto")
-    public Produto criar(@SpanAttribute("produto.form") ProdutoForm form) {
+    public Produto criar(@SpanAttribute("produto.form") ProdutoForm form, MultipartFile imagemFile) {
+        String imagemUrl = form.imagem();
+        if (imagemFile != null && !imagemFile.isEmpty()) {
+            imagemUrl = fileStorageService.storeFile(imagemFile);
+        }
+
         Produto produto = new Produto(
                 form.nome(),
                 form.descricao(),
                 form.preco(),
-                form.imagem()
+                imagemUrl
         );
         // O método save() do JpaRepository faz o INSERT e retorna a entidade com o ID gerado
         return produtoRepository.save(produto);
@@ -139,12 +147,18 @@ public class ProdutoService {
      * @throws ProdutoNaoEncontradoException se o produto não existir
      */
     @Transactional
-    public Produto atualizar(Long id, ProdutoForm form) {
+    public Produto atualizar(Long id, ProdutoForm form, MultipartFile imagemFile) {
         Produto produto = buscarPorId(id);
+        
+        String imagemUrl = form.imagem();
+        if (imagemFile != null && !imagemFile.isEmpty()) {
+            imagemUrl = fileStorageService.storeFile(imagemFile);
+        }
+
         produto.setNome(form.nome());
         produto.setDescricao(form.descricao());
         produto.setPreco(form.preco());
-        produto.setImagem(form.imagem());
+        produto.setImagem(imagemUrl);
         // Não precisa chamar save() explicitamente — o JPA (dirty checking) detecta a mudança
         // e executa o UPDATE automaticamente ao final da transação
         return produtoRepository.save(produto);

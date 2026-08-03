@@ -17,6 +17,10 @@ export default defineConfig({
       '/api': {
         target: 'http://app:8080' || process.env.VITE_API_URL || 'http://localhost:8080',
         changeOrigin: true
+      },
+      '/uploads': {
+        target: 'http://app:8080' || process.env.VITE_API_URL || 'http://localhost:8080',
+        changeOrigin: true
       }
     }
   },

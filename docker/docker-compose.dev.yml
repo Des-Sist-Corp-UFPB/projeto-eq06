@@ -64,6 +64,8 @@ services:
     volumes:
       # Monta o código-fonte para hot-reload
       - ../backend/src:/app/src
+      # Monta o diretório de uploads para não perder os arquivos de imagens dos produtos
+      - ../backend/uploads:/app/uploads
       # Persistir dependências Maven (evita re-download a cada restart)
       - maven-cache:/root/.m2
     depends_on:
