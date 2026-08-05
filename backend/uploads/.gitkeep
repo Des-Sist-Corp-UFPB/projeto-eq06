@@ -1,0 +1,3 @@
+# Este arquivo existe apenas para que o git rastreie a pasta uploads/
+# mesmo quando ela estiver vazia.
+# As imagens reais são ignoradas pelo .gitignore da pasta pai.

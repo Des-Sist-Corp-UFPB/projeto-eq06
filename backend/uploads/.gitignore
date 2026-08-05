@@ -1,0 +1,5 @@
+# Ignorar todos os arquivos de imagem enviados pelos usuários.
+# A pasta em si é mantida pelo .gitkeep para que o Docker volume funcione.
+*
+!.gitkeep
+!.gitignore
