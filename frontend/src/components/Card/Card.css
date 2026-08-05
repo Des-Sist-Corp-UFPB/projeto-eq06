@@ -2,7 +2,7 @@
 
 .container-card {
     width: 270px;
-    height: 400px;
+    min-height: 400px;
     background-color: var(--fifth-color);
     border-radius: 15px;
     display: flex;
