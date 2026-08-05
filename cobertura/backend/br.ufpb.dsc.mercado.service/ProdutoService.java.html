@@ -9,6 +9,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import io.opentelemetry.instrumentation.annotations.WithSpan;
+import io.opentelemetry.instrumentation.annotations.SpanAttribute;
 
 /**
  * Serviço de negócio para operações relacionadas a {@link Produto}.
@@ -38,8 +42,8 @@ import org.springframework.util.StringUtils;
 @Transactional(readOnly = true)
 public class ProdutoService {
 
-    // Injeção de dependência via construtor — prática recomendada pelo Spring e mais testável
     private final ProdutoRepository produtoRepository;
+    private final FileStorageService fileStorageService;
 
     /**
      * Construtor com injeção de dependência.
@@ -49,10 +53,12 @@ public class ProdutoService {
      * porque torna as dependências explícitas e facilita os testes unitários com Mockito.
      *
      * @param produtoRepository repositório JPA de produtos
+     * @param fileStorageService serviço para upload de arquivos
      */
-<span class="fc" id="L53">    public ProdutoService(ProdutoRepository produtoRepository) {</span>
-<span class="fc" id="L54">        this.produtoRepository = produtoRepository;</span>
-<span class="fc" id="L55">    }</span>
+<span class="fc" id="L58">    public ProdutoService(ProdutoRepository produtoRepository, FileStorageService fileStorageService) {</span>
+<span class="fc" id="L59">        this.produtoRepository = produtoRepository;</span>
+<span class="fc" id="L60">        this.fileStorageService = fileStorageService;</span>
+<span class="fc" id="L61">    }</span>
 
     /**
      * Lista todos os produtos com paginação.
@@ -64,7 +70,7 @@ public class ProdutoService {
      * @return página de produtos
      */
     public Page&lt;Produto&gt; listar(Pageable pageable) {
-<span class="fc" id="L67">        return produtoRepository.findAll(pageable);</span>
+<span class="fc" id="L73">        return produtoRepository.findAll(pageable);</span>
     }
 
     /**
@@ -76,10 +82,10 @@ public class ProdutoService {
      * @return página de produtos filtrados
      */
     public Page&lt;Produto&gt; buscar(String busca, Pageable pageable) {
-<span class="fc bfc" id="L79" title="All 2 branches covered.">        if (!StringUtils.hasText(busca)) {</span>
-<span class="fc" id="L80">            return produtoRepository.findAll(pageable);</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">        if (!StringUtils.hasText(busca)) {</span>
+<span class="fc" id="L86">            return produtoRepository.findAll(pageable);</span>
         }
-<span class="fc" id="L82">        return produtoRepository.findByNomeContainingIgnoreCase(busca.trim(), pageable);</span>
+<span class="fc" id="L88">        return produtoRepository.findByNomeContainingIgnoreCase(busca.trim(), pageable);</span>
     }
 
     /**
@@ -92,9 +98,10 @@ public class ProdutoService {
      * @return produto encontrado
      * @throws ProdutoNaoEncontradoException se nenhum produto for encontrado com o ID informado
      */
-    public Produto buscarPorId(Long id) {
-<span class="fc" id="L96">        return produtoRepository.findById(id)</span>
-<span class="fc" id="L97">                .orElseThrow(() -&gt; new ProdutoNaoEncontradoException(id));</span>
+    @WithSpan(&quot;buscar-produto-id&quot;)
+    public Produto buscarPorId(@SpanAttribute(&quot;produto.id&quot;) Long id) {
+<span class="fc" id="L103">        return produtoRepository.findById(id)</span>
+<span class="fc" id="L104">                .orElseThrow(() -&gt; new ProdutoNaoEncontradoException(id));</span>
     }
 
     /**
@@ -107,15 +114,21 @@ public class ProdutoService {
      * @return produto criado e persistido com ID gerado
      */
     @Transactional
-    public Produto criar(ProdutoForm form) {
-<span class="fc" id="L111">        Produto produto = new Produto(</span>
-<span class="fc" id="L112">                form.nome(),</span>
-<span class="fc" id="L113">                form.descricao(),</span>
-<span class="fc" id="L114">                form.preco(),</span>
-<span class="fc" id="L115">                form.imagem()</span>
+    @WithSpan(&quot;criar-produto&quot;)
+    public Produto criar(@SpanAttribute(&quot;produto.form&quot;) ProdutoForm form, MultipartFile imagemFile) {
+<span class="fc" id="L119">        String imagemUrl = form.imagem();</span>
+<span class="pc bpc" id="L120" title="3 of 4 branches missed.">        if (imagemFile != null &amp;&amp; !imagemFile.isEmpty()) {</span>
+<span class="nc" id="L121">            imagemUrl = fileStorageService.storeFile(imagemFile);</span>
+        }
+
+<span class="fc" id="L124">        Produto produto = new Produto(</span>
+<span class="fc" id="L125">                form.nome(),</span>
+<span class="fc" id="L126">                form.descricao(),</span>
+<span class="fc" id="L127">                form.preco(),</span>
+                imagemUrl
         );
         // O método save() do JpaRepository faz o INSERT e retorna a entidade com o ID gerado
-<span class="fc" id="L118">        return produtoRepository.save(produto);</span>
+<span class="fc" id="L131">        return produtoRepository.save(produto);</span>
     }
 
     /**
@@ -134,15 +147,21 @@ public class ProdutoService {
      * @throws ProdutoNaoEncontradoException se o produto não existir
      */
     @Transactional
-    public Produto atualizar(Long id, ProdutoForm form) {
-<span class="fc" id="L138">        Produto produto = buscarPorId(id);</span>
-<span class="fc" id="L139">        produto.setNome(form.nome());</span>
-<span class="fc" id="L140">        produto.setDescricao(form.descricao());</span>
-<span class="fc" id="L141">        produto.setPreco(form.preco());</span>
-<span class="fc" id="L142">        produto.setImagem(form.imagem());</span>
+    public Produto atualizar(Long id, ProdutoForm form, MultipartFile imagemFile) {
+<span class="fc" id="L151">        Produto produto = buscarPorId(id);</span>
+        
+<span class="fc" id="L153">        String imagemUrl = form.imagem();</span>
+<span class="pc bpc" id="L154" title="3 of 4 branches missed.">        if (imagemFile != null &amp;&amp; !imagemFile.isEmpty()) {</span>
+<span class="nc" id="L155">            imagemUrl = fileStorageService.storeFile(imagemFile);</span>
+        }
+
+<span class="fc" id="L158">        produto.setNome(form.nome());</span>
+<span class="fc" id="L159">        produto.setDescricao(form.descricao());</span>
+<span class="fc" id="L160">        produto.setPreco(form.preco());</span>
+<span class="fc" id="L161">        produto.setImagem(imagemUrl);</span>
         // Não precisa chamar save() explicitamente — o JPA (dirty checking) detecta a mudança
         // e executa o UPDATE automaticamente ao final da transação
-<span class="fc" id="L145">        return produtoRepository.save(produto);</span>
+<span class="fc" id="L164">        return produtoRepository.save(produto);</span>
     }
 
     /**
@@ -157,10 +176,10 @@ public class ProdutoService {
     @Transactional
     public void excluir(Long id) {
         // Verifica existência para dar mensagem de erro clara
-<span class="fc bfc" id="L160" title="All 2 branches covered.">        if (!produtoRepository.existsById(id)) {</span>
-<span class="fc" id="L161">            throw new ProdutoNaoEncontradoException(id);</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">        if (!produtoRepository.existsById(id)) {</span>
+<span class="fc" id="L180">            throw new ProdutoNaoEncontradoException(id);</span>
         }
-<span class="fc" id="L163">        produtoRepository.deleteById(id);</span>
-<span class="fc" id="L164">    }</span>
+<span class="fc" id="L182">        produtoRepository.deleteById(id);</span>
+<span class="fc" id="L183">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

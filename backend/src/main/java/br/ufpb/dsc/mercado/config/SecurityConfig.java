@@ -110,7 +110,7 @@ public class SecurityConfig {
                         // /webjars/** → Bootstrap, HTMX (servidos pelo Spring como recursos estáticos)
                         // /css/**, /js/** → arquivos estáticos personalizados
                         // /actuator/health → monitoramento sem autenticação
-                        .requestMatchers("/", "/index.html", "/main", "/favorites", "/criar-conta", "/info/**", "/checkout", "/auditoria", "/assets/**", "/webjars/**", "/css/**", "/js/**", "/images/**", "/uploads/**", "/actuator/health", "/ping", "/api/auth/login", "/api/produtos/**", "/api/usuarios/**", "/api/auditoria/**", "/api/admin/**", "/error", "/api/mensagens/**", "/api/chat/**").permitAll()
+                        .requestMatchers("/", "/index.html", "/main", "/favorites", "/criar-conta", "/info/**", "/checkout", "/auditoria", "/assets/**", "/webjars/**", "/css/**", "/js/**", "/images/**", "/uploads/**", "/actuator/health", "/ping", "/api/auth/login", "/api/produtos/**", "/api/usuarios/**", "/api/auditoria/**", "/api/admin/**", "/error", "/api/mensagens/**", "/api/chat/**", "/api/carrinho", "/api/carrinho/**").permitAll()
                         // Qualquer outra requisição exige autenticação
                         .anyRequest().authenticated()
                 )
@@ -135,14 +135,10 @@ public class SecurityConfig {
                 )
 
                 // === CSRF (Cross-Site Request Forgery) ===
-                // CSRF é um ataque onde um site malicioso faz requisições em nome do usuário autenticado.
-                // O Spring Security protege adicionando um token único em formulários.
-                // Para HTMX funcionar com PUT/DELETE, precisamos de uma configuração especial.
-                // Em produção real, considere usar o mecanismo de CSRF com SameSite cookies.
-                .csrf(csrf -> csrf
-                        // Desabilita CSRF apenas para os endpoints de produtos e login
-                        .ignoringRequestMatchers("/produtos/**", "/api/produtos/**", "/api/usuarios/**", "/login", "/api/auth/login", "/api/admin/**", "/api/mensagens/**", "/api/chat/**")
-                );
+                // CSRF desabilitado: esta aplicação é uma API REST stateless com autenticação via
+                // cabeçalhos customizados, não usa cookies de sessão para autenticação de API.
+                // Para aplicações REST + SPA, esta é a configuração correta.
+                .csrf(csrf -> csrf.disable());
 
         return http.build();
     }

@@ -11,10 +11,13 @@ import Checkout from "../screens/Checkout/Checkout";
 import Chat from "../screens/Chat/Chat";
 import Audit from "../screens/Audit/Audit";
 import AdminChat from "../screens/AdminChat/AdminChat";
+import { CartProvider } from "../context/CartContext";
+import CartDrawer from "../components/Cart/CartDrawer";
 
 const RoutesApp = () => {
    return(
         <AuthProvider>
+            <CartProvider>
             <BrowserRouter>
                 <Routes>
                     <Route element={<Navigate to="/login" replace />}   path="/" exact />
@@ -28,7 +31,9 @@ const RoutesApp = () => {
                     <Route element={<Audit />} path="/auditoria" />
                     <Route element={<AdminChat />} path="/admin/chat" />
                 </Routes>
+                <CartDrawer />
             </BrowserRouter>
+            </CartProvider>
         </AuthProvider>
    )
 }

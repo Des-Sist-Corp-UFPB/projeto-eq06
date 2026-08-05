@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CarrinhoController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mercado</a> &gt; <a href="index.source.html" class="el_package">br.ufpb.dsc.mercado.controller</a> &gt; <span class="el_source">CarrinhoController.java</span></div><h1>CarrinhoController.java</h1><pre class="source lang-java linenums">package br.ufpb.dsc.mercado.controller;
+
+import br.ufpb.dsc.mercado.dto.AdicionarItemDTO;
+import br.ufpb.dsc.mercado.dto.CarrinhoDTO;
+import br.ufpb.dsc.mercado.service.CarrinhoService;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping(&quot;/api/carrinho&quot;)
+public class CarrinhoController {
+
+    private final CarrinhoService carrinhoService;
+
+<span class="fc" id="L16">    public CarrinhoController(CarrinhoService carrinhoService) {</span>
+<span class="fc" id="L17">        this.carrinhoService = carrinhoService;</span>
+<span class="fc" id="L18">    }</span>
+
+    @GetMapping
+    public ResponseEntity&lt;CarrinhoDTO&gt; obterCarrinho(@RequestHeader(&quot;user-id&quot;) Long usuarioId) {
+<span class="nc" id="L22">        return ResponseEntity.ok(carrinhoService.obterCarrinhoDoUsuario(usuarioId));</span>
+    }
+
+    @PostMapping(&quot;/itens&quot;)
+    public ResponseEntity&lt;CarrinhoDTO&gt; adicionarItem(
+            @RequestHeader(&quot;user-id&quot;) Long usuarioId,
+            @Valid @RequestBody AdicionarItemDTO dto) {
+<span class="nc" id="L29">        return ResponseEntity.ok(carrinhoService.adicionarItem(usuarioId, dto));</span>
+    }
+
+    @PutMapping(&quot;/itens/{produtoId}&quot;)
+    public ResponseEntity&lt;CarrinhoDTO&gt; atualizarQuantidade(
+            @RequestHeader(&quot;user-id&quot;) Long usuarioId,
+            @PathVariable Long produtoId,
+            @RequestParam Integer quantidade) {
+<span class="nc" id="L37">        return ResponseEntity.ok(carrinhoService.atualizarQuantidade(usuarioId, produtoId, quantidade));</span>
+    }
+
+    @DeleteMapping(&quot;/itens/{produtoId}&quot;)
+    public ResponseEntity&lt;CarrinhoDTO&gt; removerItem(
+            @RequestHeader(&quot;user-id&quot;) Long usuarioId,
+            @PathVariable Long produtoId) {
+<span class="nc" id="L44">        return ResponseEntity.ok(carrinhoService.removerItem(usuarioId, produtoId));</span>
+    }
+
+    @DeleteMapping
+    public ResponseEntity&lt;CarrinhoDTO&gt; limparCarrinho(@RequestHeader(&quot;user-id&quot;) Long usuarioId) {
+<span class="nc" id="L49">        return ResponseEntity.ok(carrinhoService.limparCarrinho(usuarioId));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

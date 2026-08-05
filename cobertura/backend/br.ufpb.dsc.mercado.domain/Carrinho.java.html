@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Carrinho.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mercado</a> &gt; <a href="index.source.html" class="el_package">br.ufpb.dsc.mercado.domain</a> &gt; <span class="el_source">Carrinho.java</span></div><h1>Carrinho.java</h1><pre class="source lang-java linenums">package br.ufpb.dsc.mercado.domain;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = &quot;carrinho&quot;)
+<span class="fc" id="L10">public class Carrinho {</span>
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;usuario_id&quot;, nullable = false, unique = true)
+    private Usuario usuario;
+
+<span class="fc" id="L20">    @OneToMany(mappedBy = &quot;carrinho&quot;, cascade = CascadeType.ALL, orphanRemoval = true)</span>
+    private List&lt;ItemCarrinho&gt; itens = new ArrayList&lt;&gt;();
+
+    @Column(name = &quot;criado_em&quot;, updatable = false)
+    private LocalDateTime criadoEm;
+
+    @Column(name = &quot;atualizado_em&quot;)
+    private LocalDateTime atualizadoEm;
+
+    @PrePersist
+    protected void onCreate() {
+<span class="nc" id="L31">        this.criadoEm = LocalDateTime.now();</span>
+<span class="nc" id="L32">        this.atualizadoEm = LocalDateTime.now();</span>
+<span class="nc" id="L33">    }</span>
+
+    @PreUpdate
+    protected void onUpdate() {
+<span class="nc" id="L37">        this.atualizadoEm = LocalDateTime.now();</span>
+<span class="nc" id="L38">    }</span>
+
+    // Getters and Setters
+
+    public Long getId() {
+<span class="fc" id="L43">        return id;</span>
+    }
+
+    public void setId(Long id) {
+<span class="fc" id="L47">        this.id = id;</span>
+<span class="fc" id="L48">    }</span>
+
+    public Usuario getUsuario() {
+<span class="nc" id="L51">        return usuario;</span>
+    }
+
+    public void setUsuario(Usuario usuario) {
+<span class="fc" id="L55">        this.usuario = usuario;</span>
+<span class="fc" id="L56">    }</span>
+
+    public List&lt;ItemCarrinho&gt; getItens() {
+<span class="fc" id="L59">        return itens;</span>
+    }
+
+    public void setItens(List&lt;ItemCarrinho&gt; itens) {
+<span class="nc" id="L63">        this.itens = itens;</span>
+<span class="nc" id="L64">    }</span>
+
+    public void adicionarItem(ItemCarrinho item) {
+<span class="fc" id="L67">        itens.add(item);</span>
+<span class="fc" id="L68">        item.setCarrinho(this);</span>
+<span class="fc" id="L69">    }</span>
+
+    public void removerItem(ItemCarrinho item) {
+<span class="fc" id="L72">        itens.remove(item);</span>
+<span class="fc" id="L73">        item.setCarrinho(null);</span>
+<span class="fc" id="L74">    }</span>
+
+    public LocalDateTime getCriadoEm() {
+<span class="nc" id="L77">        return criadoEm;</span>
+    }
+
+    public void setCriadoEm(LocalDateTime criadoEm) {
+<span class="nc" id="L81">        this.criadoEm = criadoEm;</span>
+<span class="nc" id="L82">    }</span>
+
+    public LocalDateTime getAtualizadoEm() {
+<span class="nc" id="L85">        return atualizadoEm;</span>
+    }
+
+    public void setAtualizadoEm(LocalDateTime atualizadoEm) {
+<span class="nc" id="L89">        this.atualizadoEm = atualizadoEm;</span>
+<span class="nc" id="L90">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

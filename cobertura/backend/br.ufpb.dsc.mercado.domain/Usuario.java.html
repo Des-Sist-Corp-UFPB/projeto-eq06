@@ -17,6 +17,9 @@ import java.time.LocalDateTime;
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(length = 20)
+    private String cpf;
+
     @Column(nullable = false)
     private String senha;
 
@@ -28,63 +31,71 @@ import java.time.LocalDateTime;
 
     @PrePersist
     protected void onCreate() {
-<span class="fc" id="L31">        this.criadoEm = LocalDateTime.now();</span>
-<span class="fc" id="L32">        this.atualizadoEm = LocalDateTime.now();</span>
-<span class="fc" id="L33">    }</span>
+<span class="fc" id="L34">        this.criadoEm = LocalDateTime.now();</span>
+<span class="fc" id="L35">        this.atualizadoEm = LocalDateTime.now();</span>
+<span class="fc" id="L36">    }</span>
 
     @PreUpdate
     protected void onUpdate() {
-<span class="fc" id="L37">        this.atualizadoEm = LocalDateTime.now();</span>
-<span class="fc" id="L38">    }</span>
+<span class="fc" id="L40">        this.atualizadoEm = LocalDateTime.now();</span>
+<span class="fc" id="L41">    }</span>
 
     // Getters e Setters
 
     public Long getId() {
-<span class="fc" id="L43">        return id;</span>
+<span class="fc" id="L46">        return id;</span>
     }
 
     public void setId(Long id) {
-<span class="fc" id="L47">        this.id = id;</span>
-<span class="fc" id="L48">    }</span>
+<span class="fc" id="L50">        this.id = id;</span>
+<span class="fc" id="L51">    }</span>
 
     public String getNome() {
-<span class="fc" id="L51">        return nome;</span>
+<span class="fc" id="L54">        return nome;</span>
     }
 
     public void setNome(String nome) {
-<span class="fc" id="L55">        this.nome = nome;</span>
-<span class="fc" id="L56">    }</span>
+<span class="fc" id="L58">        this.nome = nome;</span>
+<span class="fc" id="L59">    }</span>
 
     public String getEmail() {
-<span class="fc" id="L59">        return email;</span>
+<span class="fc" id="L62">        return email;</span>
     }
 
     public void setEmail(String email) {
-<span class="fc" id="L63">        this.email = email;</span>
-<span class="fc" id="L64">    }</span>
+<span class="fc" id="L66">        this.email = email;</span>
+<span class="fc" id="L67">    }</span>
+
+    public String getCpf() {
+<span class="fc" id="L70">        return cpf;</span>
+    }
+
+    public void setCpf(String cpf) {
+<span class="fc" id="L74">        this.cpf = cpf;</span>
+<span class="fc" id="L75">    }</span>
 
     public String getSenha() {
-<span class="fc" id="L67">        return senha;</span>
+<span class="fc" id="L78">        return senha;</span>
     }
 
     public void setSenha(String senha) {
-<span class="fc" id="L71">        this.senha = senha;</span>
-<span class="fc" id="L72">    }</span>
+<span class="fc" id="L82">        this.senha = senha;</span>
+<span class="fc" id="L83">    }</span>
 
     public LocalDateTime getCriadoEm() {
-<span class="fc" id="L75">        return criadoEm;</span>
+<span class="fc" id="L86">        return criadoEm;</span>
     }
 
     public void setCriadoEm(LocalDateTime criadoEm) {
-<span class="fc" id="L79">        this.criadoEm = criadoEm;</span>
-<span class="fc" id="L80">    }</span>
+<span class="fc" id="L90">        this.criadoEm = criadoEm;</span>
+<span class="fc" id="L91">    }</span>
 
     public LocalDateTime getAtualizadoEm() {
-<span class="fc" id="L83">        return atualizadoEm;</span>
+<span class="fc" id="L94">        return atualizadoEm;</span>
     }
 
     public void setAtualizadoEm(LocalDateTime atualizadoEm) {
-<span class="fc" id="L87">        this.atualizadoEm = atualizadoEm;</span>
-<span class="fc" id="L88">    }</span>
+<span class="fc" id="L98">        this.atualizadoEm = atualizadoEm;</span>
+<span class="fc" id="L99">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

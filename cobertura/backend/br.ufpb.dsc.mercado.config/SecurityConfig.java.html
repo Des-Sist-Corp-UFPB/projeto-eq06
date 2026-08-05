@@ -110,7 +110,7 @@ import org.springframework.security.web.SecurityFilterChain;
                         // /webjars/** → Bootstrap, HTMX (servidos pelo Spring como recursos estáticos)
                         // /css/**, /js/** → arquivos estáticos personalizados
                         // /actuator/health → monitoramento sem autenticação
-<span class="fc" id="L113">                        .requestMatchers(&quot;/&quot;, &quot;/index.html&quot;, &quot;/main&quot;, &quot;/favorites&quot;, &quot;/criar-conta&quot;, &quot;/info/**&quot;, &quot;/checkout&quot;, &quot;/auditoria&quot;, &quot;/assets/**&quot;, &quot;/webjars/**&quot;, &quot;/css/**&quot;, &quot;/js/**&quot;, &quot;/images/**&quot;, &quot;/actuator/health&quot;, &quot;/ping&quot;, &quot;/api/auth/login&quot;, &quot;/api/produtos/**&quot;, &quot;/api/usuarios/**&quot;, &quot;/api/auditoria/**&quot;, &quot;/api/admin/**&quot;, &quot;/error&quot;, &quot;/api/mensagens/**&quot;, &quot;/api/chat/**&quot;).permitAll()</span>
+<span class="fc" id="L113">                        .requestMatchers(&quot;/&quot;, &quot;/index.html&quot;, &quot;/main&quot;, &quot;/favorites&quot;, &quot;/criar-conta&quot;, &quot;/info/**&quot;, &quot;/checkout&quot;, &quot;/auditoria&quot;, &quot;/assets/**&quot;, &quot;/webjars/**&quot;, &quot;/css/**&quot;, &quot;/js/**&quot;, &quot;/images/**&quot;, &quot;/uploads/**&quot;, &quot;/actuator/health&quot;, &quot;/ping&quot;, &quot;/api/auth/login&quot;, &quot;/api/produtos/**&quot;, &quot;/api/usuarios/**&quot;, &quot;/api/auditoria/**&quot;, &quot;/api/admin/**&quot;, &quot;/error&quot;, &quot;/api/mensagens/**&quot;, &quot;/api/chat/**&quot;, &quot;/api/carrinho&quot;, &quot;/api/carrinho/**&quot;).permitAll()</span>
                         // Qualquer outra requisição exige autenticação
 <span class="fc" id="L115">                        .anyRequest().authenticated()</span>
                 )
@@ -135,16 +135,12 @@ import org.springframework.security.web.SecurityFilterChain;
                 )
 
                 // === CSRF (Cross-Site Request Forgery) ===
-                // CSRF é um ataque onde um site malicioso faz requisições em nome do usuário autenticado.
-                // O Spring Security protege adicionando um token único em formulários.
-                // Para HTMX funcionar com PUT/DELETE, precisamos de uma configuração especial.
-                // Em produção real, considere usar o mecanismo de CSRF com SameSite cookies.
-<span class="fc" id="L142">                .csrf(csrf -&gt; csrf</span>
-                        // Desabilita CSRF apenas para os endpoints de produtos e login
-<span class="fc" id="L144">                        .ignoringRequestMatchers(&quot;/produtos/**&quot;, &quot;/api/produtos/**&quot;, &quot;/api/usuarios/**&quot;, &quot;/login&quot;, &quot;/api/auth/login&quot;, &quot;/api/admin/**&quot;, &quot;/api/mensagens/**&quot;, &quot;/api/chat/**&quot;)</span>
-                );
+                // CSRF desabilitado: esta aplicação é uma API REST stateless com autenticação via
+                // cabeçalhos customizados, não usa cookies de sessão para autenticação de API.
+                // Para aplicações REST + SPA, esta é a configuração correta.
+<span class="fc" id="L141">                .csrf(csrf -&gt; csrf.disable());</span>
 
-<span class="fc" id="L147">        return http.build();</span>
+<span class="fc" id="L143">        return http.build();</span>
     }
 
     /**
@@ -160,7 +156,7 @@ import org.springframework.security.web.SecurityFilterChain;
      */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-<span class="fc" id="L163">        return config.getAuthenticationManager();</span>
+<span class="fc" id="L159">        return config.getAuthenticationManager();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

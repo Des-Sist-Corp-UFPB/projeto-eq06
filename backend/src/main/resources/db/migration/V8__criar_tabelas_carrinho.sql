@@ -1,0 +1,15 @@
+CREATE TABLE carrinho (
+    id BIGSERIAL PRIMARY KEY,
+    usuario_id BIGINT UNIQUE NOT NULL REFERENCES usuario(id) ON DELETE CASCADE,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE item_carrinho (
+    id BIGSERIAL PRIMARY KEY,
+    carrinho_id BIGINT NOT NULL REFERENCES carrinho(id) ON DELETE CASCADE,
+    produto_id BIGINT NOT NULL REFERENCES produto(id) ON DELETE CASCADE,
+    quantidade INT NOT NULL DEFAULT 1,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (carrinho_id, produto_id)
+);

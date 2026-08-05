@@ -3,12 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FiSearch, FiHeart, FiShoppingCart, FiLogOut, FiShield, FiMessageSquare } from "react-icons/fi";
 import { FaCircleUser } from 'react-icons/fa6';
 import { AuthContext } from "../../context/AuthContext";
+import { useCart } from "../../context/CartContext";
 import Button from "../../components/Button/Button";
 import pbxLogo from "../../assets/logo/1211 Sem Título_20260220094915.png";
 import "./Header.css";
 
 function Header({ onSearch }) {
     const { user, logout } = useContext(AuthContext);
+    const { cart, setIsCartOpen } = useCart();
     const navigate = useNavigate();
     const [searchValue, setSearchValue] = useState('');
 
@@ -69,9 +71,9 @@ function Header({ onSearch }) {
                             <Link to="/login">
                                 <FiHeart />
                             </Link>
-                            <Link to="/login">
+                            <div className="cart-icon-container" onClick={() => navigate('/login')}>
                                 <FiShoppingCart />
-                            </Link>
+                            </div>
                         </div>
                     </div>
                 ) : (
@@ -80,9 +82,12 @@ function Header({ onSearch }) {
                             <Link to='/favorites'>
                                 <FiHeart />
                             </Link>
-                            <Link to="/carrinho">
+                            <div className="cart-icon-container" onClick={() => setIsCartOpen(true)}>
                                 <FiShoppingCart />
-                            </Link>
+                                {cart?.quantidadeTotal > 0 && (
+                                    <span className="cart-badge">{cart.quantidadeTotal}</span>
+                                )}
+                            </div>
                             {user.email === 'admin' && (
                                 <>
                                     <Link to="/auditoria" title="Painel de Auditoria">

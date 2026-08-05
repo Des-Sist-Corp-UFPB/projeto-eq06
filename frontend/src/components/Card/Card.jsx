@@ -1,8 +1,9 @@
 import "./Card.css";
 import { Link } from 'react-router-dom';
-import { FiHeart, FiTrash2 } from "react-icons/fi";
+import { FiHeart, FiTrash2, FiShoppingCart } from "react-icons/fi";
 import { FaHeart } from "react-icons/fa";
 import Button from "../Button/Button";
+import { useCart } from "../../context/CartContext";
 
 function Card({ 
     id,
@@ -15,6 +16,8 @@ function Card({
     isFavorite,
     onToggleFavorite
 }) {
+    const { addItem } = useCart();
+    
     const formattedPrice = new Intl.NumberFormat('pt-BR', {
         style: 'currency',
         currency: 'BRL',
@@ -47,10 +50,14 @@ function Card({
             <div className="container-button">
                 <Link to={`/info/${id}`} className="link-details">
                     <Button 
-                        btnText="Learn more"
-                        variant="Orange"
+                        btnText="Detalhes"
+                        variant="White"
                     />
                 </Link>
+                <button className="btn-add-to-cart" onClick={() => addItem(id, 1)}>
+                    <FiShoppingCart size={15} />
+                    Adicionar ao carrinho
+                </button>
             </div>
         </article>
     );

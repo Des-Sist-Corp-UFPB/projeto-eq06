@@ -16,8 +16,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
                 // Permitir chamadas do Vite durante o desenvolvimento e produção
 <span class="fc" id="L17">                registry.addMapping(&quot;/**&quot;)</span>
 <span class="fc" id="L18">                        .allowedOriginPatterns(&quot;*&quot;)</span>
-<span class="fc" id="L19">                        .allowedMethods(&quot;GET&quot;, &quot;POST&quot;, &quot;PUT&quot;, &quot;DELETE&quot;, &quot;OPTIONS&quot;, &quot;HEAD&quot;, &quot;TRACE&quot;, &quot;CONNECT&quot;);</span>
-<span class="fc" id="L20">            }</span>
+<span class="fc" id="L19">                        .allowedMethods(&quot;GET&quot;, &quot;POST&quot;, &quot;PUT&quot;, &quot;DELETE&quot;, &quot;OPTIONS&quot;, &quot;HEAD&quot;, &quot;TRACE&quot;, &quot;CONNECT&quot;)</span>
+<span class="fc" id="L20">                        .allowedHeaders(&quot;*&quot;);</span>
+<span class="fc" id="L21">            }</span>
         };
     }
 }

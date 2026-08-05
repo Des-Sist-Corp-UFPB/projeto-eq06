@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import br.ufpb.dsc.mercado.aspect.AuditAction;
 
 /**
@@ -23,49 +24,52 @@ public class ProdutoController {
 
     private final ProdutoService produtoService;
 
-<span class="fc" id="L26">    public ProdutoController(ProdutoService produtoService) {</span>
-<span class="fc" id="L27">        this.produtoService = produtoService;</span>
-<span class="fc" id="L28">    }</span>
+<span class="fc" id="L27">    public ProdutoController(ProdutoService produtoService) {</span>
+<span class="fc" id="L28">        this.produtoService = produtoService;</span>
+<span class="fc" id="L29">    }</span>
 
     @GetMapping
     public ResponseEntity&lt;Page&lt;Produto&gt;&gt; listar(
             @RequestParam(name = &quot;busca&quot;, required = false, defaultValue = &quot;&quot;) String busca,
             @RequestParam(name = &quot;pagina&quot;, defaultValue = &quot;0&quot;) int pagina) {
 
-<span class="fc" id="L35">        PageRequest pageRequest = PageRequest.of(pagina, TAMANHO_PAGINA, Sort.by(&quot;nome&quot;).ascending());</span>
-<span class="fc" id="L36">        Page&lt;Produto&gt; produtos = produtoService.buscar(busca, pageRequest);</span>
+<span class="fc" id="L36">        PageRequest pageRequest = PageRequest.of(pagina, TAMANHO_PAGINA, Sort.by(&quot;nome&quot;).ascending());</span>
+<span class="fc" id="L37">        Page&lt;Produto&gt; produtos = produtoService.buscar(busca, pageRequest);</span>
 
-<span class="fc" id="L38">        return ResponseEntity.ok(produtos);</span>
+<span class="fc" id="L39">        return ResponseEntity.ok(produtos);</span>
     }
 
     @GetMapping(&quot;/{id}&quot;)
     public ResponseEntity&lt;Produto&gt; buscarPorId(@PathVariable Long id) {
-<span class="fc" id="L43">        Produto produto = produtoService.buscarPorId(id);</span>
-<span class="fc" id="L44">        return ResponseEntity.ok(produto);</span>
+<span class="fc" id="L44">        Produto produto = produtoService.buscarPorId(id);</span>
+<span class="fc" id="L45">        return ResponseEntity.ok(produto);</span>
     }
 
-    @PostMapping
+    @PostMapping(consumes = {&quot;multipart/form-data&quot;})
     @AuditAction(&quot;CRIAR_PRODUTO&quot;)
-    public ResponseEntity&lt;Produto&gt; criar(@Valid @RequestBody ProdutoForm form) {
-<span class="fc" id="L50">        Produto novoProduto = produtoService.criar(form);</span>
-<span class="fc" id="L51">        return ResponseEntity.status(HttpStatus.CREATED).body(novoProduto);</span>
+    public ResponseEntity&lt;Produto&gt; criar(
+            @RequestPart(&quot;produto&quot;) @Valid ProdutoForm form,
+            @RequestPart(value = &quot;imagem&quot;, required = false) MultipartFile imagem) {
+<span class="fc" id="L53">        Produto novoProduto = produtoService.criar(form, imagem);</span>
+<span class="fc" id="L54">        return ResponseEntity.status(HttpStatus.CREATED).body(novoProduto);</span>
     }
 
-    @PutMapping(&quot;/{id}&quot;)
+    @PutMapping(value = &quot;/{id}&quot;, consumes = {&quot;multipart/form-data&quot;})
     @AuditAction(&quot;ATUALIZAR_PRODUTO&quot;)
     public ResponseEntity&lt;Produto&gt; atualizar(
             @PathVariable Long id,
-            @Valid @RequestBody ProdutoForm form) {
+            @RequestPart(&quot;produto&quot;) @Valid ProdutoForm form,
+            @RequestPart(value = &quot;imagem&quot;, required = false) MultipartFile imagem) {
 
-<span class="fc" id="L60">        Produto produtoAtualizado = produtoService.atualizar(id, form);</span>
-<span class="fc" id="L61">        return ResponseEntity.ok(produtoAtualizado);</span>
+<span class="fc" id="L64">        Produto produtoAtualizado = produtoService.atualizar(id, form, imagem);</span>
+<span class="fc" id="L65">        return ResponseEntity.ok(produtoAtualizado);</span>
     }
 
     @DeleteMapping(&quot;/{id}&quot;)
     @AuditAction(&quot;EXCLUIR_PRODUTO&quot;)
     public ResponseEntity&lt;Void&gt; excluir(@PathVariable Long id) {
-<span class="fc" id="L67">        produtoService.excluir(id);</span>
-<span class="fc" id="L68">        return ResponseEntity.noContent().build();</span>
+<span class="fc" id="L71">        produtoService.excluir(id);</span>
+<span class="fc" id="L72">        return ResponseEntity.noContent().build();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

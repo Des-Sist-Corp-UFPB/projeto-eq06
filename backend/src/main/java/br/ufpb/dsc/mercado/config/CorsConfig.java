@@ -16,7 +16,8 @@ public class CorsConfig {
                 // Permitir chamadas do Vite durante o desenvolvimento e produção
                 registry.addMapping("/**")
                         .allowedOriginPatterns("*")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT");
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT")
+                        .allowedHeaders("*");
             }
         };
     }
