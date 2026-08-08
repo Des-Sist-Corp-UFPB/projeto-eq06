@@ -8,6 +8,9 @@ Projeto para a disciplina **Desenvolvimento de Sistemas Corporativos**.
 - Samuel César Dantas Mota. username do git: samuelcsar
 - Sabrina Gonçalves de Almeida. username do git: sabrina-goncalves-de-almeida
 
+## Vídeo de Apresentação da Entrega Final
+
+[Assista ao vídeo de demonstração do projeto](https://drive.google.com/drive/u/0/folders/1LedhHDjXHoKq4riKae5kO--swoWGykL2)
 
 ---
 
