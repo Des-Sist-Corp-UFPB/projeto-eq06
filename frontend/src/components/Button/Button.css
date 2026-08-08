@@ -1,0 +1,63 @@
+@import '../../global.css'; 
+
+.btnOrange {
+  width: 100%;
+  margin-top: 20px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--first-color);
+  color: var(--text-first-color);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.btnOrange:hover {
+  background-color: var(--second-color);
+  color: var(--text-second-color);
+}
+
+.btnWhite {
+  width: 100%;
+  margin-top: 20px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--third-color);
+  color: var(--text-third-color);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.btnWhite:hover {
+  background-color: var(--second-color);
+  color: var(--text-first-color);
+}
+
+.btnOrangeWithIcon{
+  width: 100%;
+  margin-top: 20px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--first-color);
+  color: var(--text-first-color);
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btnOrangeWithIcon img{
+  margin: 5px 10px 0 10px;
+}
+
+.btnOrangeWithIcon:hover{
+  background-color: var(--second-color);
+  color: var(--text-second-color);
+}
+
+.btnOrangeWithIcon:hover img{
+  content: url('../../assets/shopping-cart/shopping-cart-orange.png');
+}

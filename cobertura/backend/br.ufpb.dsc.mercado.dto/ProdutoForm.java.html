@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProdutoForm.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mercado</a> &gt; <a href="index.source.html" class="el_package">br.ufpb.dsc.mercado.dto</a> &gt; <span class="el_source">ProdutoForm.java</span></div><h1>ProdutoForm.java</h1><pre class="source lang-java linenums">package br.ufpb.dsc.mercado.dto;
+
+import jakarta.validation.constraints.*;
+
+import java.math.BigDecimal;
+
+/**
+ * DTO (Data Transfer Object) para criação e edição de produtos.
+ *
+ * &lt;p&gt;&lt;strong&gt;Por que usar um DTO em vez da entidade diretamente?&lt;/strong&gt;&lt;br&gt;
+ * É uma boa prática separar os dados de entrada (formulário) da entidade de domínio.
+ * Isso evita problemas de segurança como &quot;mass assignment&quot; (atribuição em massa),
+ * onde um usuário mal-intencionado poderia enviar campos que não deveriam ser editados
+ * (ex.: {@code id}, {@code criadoEm}).
+ *
+ * &lt;p&gt;&lt;strong&gt;Records Java (Java 16+):&lt;/strong&gt;&lt;br&gt;
+ * Um {@code record} é uma classe imutável que gera automaticamente:
+ * &lt;ul&gt;
+ *   &lt;li&gt;Construtor com todos os campos&lt;/li&gt;
+ *   &lt;li&gt;Getters (acessados pelo nome do campo, sem prefixo &quot;get&quot;)&lt;/li&gt;
+ *   &lt;li&gt;{@code equals()}, {@code hashCode()} e {@code toString()}&lt;/li&gt;
+ * &lt;/ul&gt;
+ * É ideal para DTOs porque os dados de entrada não devem ser modificados após recebidos.
+ *
+ * &lt;p&gt;&lt;strong&gt;Bean Validation (Jakarta Validation):&lt;/strong&gt;&lt;br&gt;
+ * As anotações abaixo definem regras de validação que são verificadas automaticamente
+ * pelo Spring quando o controller recebe os dados com {@code @Valid} ou {@code @Validated}.
+ * Se alguma regra falhar, o Spring lança {@code MethodArgumentNotValidException}.
+ *
+ * @param nome      nome do produto — obrigatório, entre 2 e 120 caracteres
+ * @param descricao descrição opcional — máximo 2000 caracteres
+ * @param preco     preço do produto — obrigatório, não negativo, máximo 2 casas decimais
+ *
+ * @author DSC - UFPB Campus IV
+ */
+<span class="fc" id="L36">public record ProdutoForm(</span>
+
+        /**
+         * {@code @NotBlank} falha se o valor for {@code null}, vazio (&quot;&quot;) ou apenas espaços.
+         * Difere de {@code @NotNull} (aceita strings vazias) e {@code @NotEmpty} (aceita espaços).
+         * {@code @Size} valida o comprimento da string.
+         */
+        @NotBlank(message = &quot;O nome é obrigatório&quot;)
+        @Size(min = 2, max = 120, message = &quot;O nome deve ter entre 2 e 120 caracteres&quot;)
+        String nome,
+
+        /**
+         * Campo opcional. Sem {@code @NotBlank}, o campo pode ser nulo ou vazio.
+         * {@code @Size} ainda é aplicado quando o valor não for nulo.
+         */
+        @Size(max = 2000, message = &quot;A descrição pode ter no máximo 2000 caracteres&quot;)
+        String descricao,
+
+        /**
+         * {@code @NotNull} garante que o preço seja enviado.
+         * {@code @DecimalMin} define o valor mínimo permitido (inclusive, por padrão).
+         * {@code @Digits} controla a precisão: 8 dígitos inteiros e 2 decimais.
+         */
+        @NotNull(message = &quot;O preço é obrigatório&quot;)
+        @DecimalMin(value = &quot;0.00&quot;, message = &quot;O preço não pode ser negativo&quot;)
+        @Digits(integer = 8, fraction = 2, message = &quot;Preço deve ter no máximo 8 dígitos inteiros e 2 decimais&quot;)
+        BigDecimal preco,
+
+        /**
+         * Campo opcional para a URL da imagem.
+         */
+        @Size(max = 2000, message = &quot;A URL da imagem pode ter no máximo 2000 caracteres&quot;)
+        String imagem
+
+) {
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

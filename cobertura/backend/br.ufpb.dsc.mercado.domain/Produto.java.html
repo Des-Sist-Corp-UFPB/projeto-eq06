@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Produto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mercado</a> &gt; <a href="index.source.html" class="el_package">br.ufpb.dsc.mercado.domain</a> &gt; <span class="el_source">Produto.java</span></div><h1>Produto.java</h1><pre class="source lang-java linenums">package br.ufpb.dsc.mercado.domain;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+
+/**
+ * Entidade JPA que representa um produto no sistema.
+ *
+ * &lt;p&gt;&lt;strong&gt;O que é uma Entidade JPA?&lt;/strong&gt;&lt;br&gt;
+ * Uma entidade é uma classe Java mapeada para uma tabela do banco de dados.
+ * Cada instância da classe corresponde a uma linha da tabela.
+ * O JPA (Java Persistence API) é a especificação; o Hibernate é a implementação usada pelo Spring Boot.
+ *
+ * &lt;p&gt;&lt;strong&gt;Ciclo de vida de uma entidade JPA:&lt;/strong&gt;
+ * &lt;ol&gt;
+ *   &lt;li&gt;&lt;em&gt;Transient&lt;/em&gt;: objeto criado com {@code new}, ainda não gerenciado pelo JPA.&lt;/li&gt;
+ *   &lt;li&gt;&lt;em&gt;Managed&lt;/em&gt;: objeto salvo/buscado pelo EntityManager — mudanças são sincronizadas com o banco.&lt;/li&gt;
+ *   &lt;li&gt;&lt;em&gt;Detached&lt;/em&gt;: objeto foi gerenciado mas a sessão foi fechada.&lt;/li&gt;
+ *   &lt;li&gt;&lt;em&gt;Removed&lt;/em&gt;: marcado para exclusão.&lt;/li&gt;
+ * &lt;/ol&gt;
+ *
+ * @author DSC - UFPB Campus IV
+ */
+// @Entity informa ao JPA que esta classe é uma entidade persistível.
+@Entity
+// @Table define o nome exato da tabela no banco. Sem ela, o JPA usaria o nome da classe.
+@Table(name = &quot;produto&quot;)
+public class Produto {
+
+    /**
+     * Identificador único do produto.
+     *
+     * &lt;p&gt;{@code @Id} marca o campo como chave primária.
+     * {@code @GeneratedValue} delega a geração do ID ao banco via SEQUENCE do PostgreSQL
+     * (equivalente ao BIGSERIAL da migração SQL).
+     * {@code GenerationType.IDENTITY} usa a coluna de identidade/autoincremento do banco.
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    /**
+     * Nome do produto.
+     *
+     * &lt;p&gt;{@code @Column} permite configurar restrições a nível de DDL (geração de schema).
+     * Como usamos Flyway para controlar o schema, esses atributos servem mais como documentação
+     * e para validação do modelo.
+     *
+     * &lt;p&gt;{@code @NotBlank} (Bean Validation) garante que o nome não seja nulo, vazio ou só espaços.
+     * {@code @Size} limita o tamanho mínimo e máximo da string.
+     */
+    @NotBlank(message = &quot;O nome do produto é obrigatório&quot;)
+    @Size(min = 2, max = 120, message = &quot;O nome deve ter entre 2 e 120 caracteres&quot;)
+    @Column(name = &quot;nome&quot;, nullable = false, length = 120)
+    private String nome;
+
+    /**
+     * Descrição opcional do produto.
+     *
+     * &lt;p&gt;{@code columnDefinition = &quot;TEXT&quot;} mapeia para o tipo TEXT do PostgreSQL,
+     * que suporta strings de tamanho ilimitado (diferente de VARCHAR).
+     */
+    @Size(max = 2000, message = &quot;A descrição pode ter no máximo 2000 caracteres&quot;)
+    @Column(name = &quot;descricao&quot;, columnDefinition = &quot;TEXT&quot;)
+    private String descricao;
+
+    /**
+     * Preço do produto com precisão decimal.
+     *
+     * &lt;p&gt;{@code BigDecimal} é o tipo correto para valores monetários em Java.
+     * Nunca use {@code float} ou {@code double} para dinheiro — eles têm imprecisão de ponto flutuante.
+     *
+     * &lt;p&gt;{@code precision = 10, scale = 2} significa: até 10 dígitos no total, sendo 2 decimais.
+     * Ex.: 99999999.99 é o valor máximo.
+     */
+    @NotNull(message = &quot;O preço é obrigatório&quot;)
+    @DecimalMin(value = &quot;0.00&quot;, message = &quot;O preço não pode ser negativo&quot;)
+    @Digits(integer = 8, fraction = 2, message = &quot;Preço deve ter no máximo 8 dígitos inteiros e 2 decimais&quot;)
+    @Column(name = &quot;preco&quot;, nullable = false, precision = 10, scale = 2)
+    private BigDecimal preco;
+
+    /**
+     * URL da imagem do produto.
+     * Pode ter até 2000 caracteres, já que links da web podem ser muito grandes.
+     */
+    @Size(max = 2000, message = &quot;A URL da imagem pode ter no máximo 2000 caracteres&quot;)
+    @Column(name = &quot;imagem&quot;, length = 2000)
+    private String imagem;
+
+    /**
+     * Data e hora de criação do registro.
+     *
+     * &lt;p&gt;{@code Instant} representa um ponto no tempo em UTC — a melhor prática para armazenar
+     * timestamps no banco, independente do fuso horário do servidor.
+     *
+     * &lt;p&gt;{@code updatable = false} impede que o Hibernate atualize este campo após a criação.
+     */
+    @Column(name = &quot;criado_em&quot;, nullable = false, updatable = false)
+    private Instant criadoEm;
+
+    /**
+     * Data e hora da última atualização do registro.
+     */
+    @Column(name = &quot;atualizado_em&quot;, nullable = false)
+    private Instant atualizadoEm;
+
+    // =========================================================================
+    // CALLBACKS JPA (@PrePersist / @PreUpdate)
+    // =========================================================================
+
+    /**
+     * Executado pelo JPA automaticamente ANTES de fazer INSERT no banco.
+     *
+     * &lt;p&gt;Garante que as datas de criação e atualização sejam preenchidas
+     * sem que o código de negócio precise se preocupar com isso.
+     */
+    @PrePersist
+    protected void prePersist() {
+<span class="fc" id="L122">        Instant agora = Instant.now();</span>
+<span class="fc" id="L123">        this.criadoEm = agora;</span>
+<span class="fc" id="L124">        this.atualizadoEm = agora;</span>
+<span class="fc" id="L125">    }</span>
+
+    /**
+     * Executado pelo JPA automaticamente ANTES de fazer UPDATE no banco.
+     *
+     * &lt;p&gt;Atualiza automaticamente o campo {@code atualizadoEm} a cada modificação.
+     */
+    @PreUpdate
+    protected void preUpdate() {
+<span class="fc" id="L134">        this.atualizadoEm = Instant.now();</span>
+<span class="fc" id="L135">    }</span>
+
+    // =========================================================================
+    // CONSTRUTORES
+    // =========================================================================
+
+    /**
+     * Construtor padrão exigido pelo JPA.
+     * O JPA precisa instanciar a entidade via reflexão ao carregar do banco.
+     */
+<span class="fc" id="L145">    public Produto() {</span>
+<span class="fc" id="L146">    }</span>
+
+    /**
+     * Construtor conveniente para criação de produtos.
+     *
+     * @param nome      nome do produto
+     * @param descricao descrição opcional
+     * @param preco     preço do produto
+     */
+<span class="fc" id="L155">    public Produto(String nome, String descricao, BigDecimal preco) {</span>
+<span class="fc" id="L156">        this.nome = nome;</span>
+<span class="fc" id="L157">        this.descricao = descricao;</span>
+<span class="fc" id="L158">        this.preco = preco;</span>
+<span class="fc" id="L159">    }</span>
+
+    /**
+     * Construtor com imagem opcional.
+     *
+     * @param nome      nome do produto
+     * @param descricao descrição opcional
+     * @param preco     preço do produto
+     * @param imagem    URL da imagem opcional
+     */
+<span class="fc" id="L169">    public Produto(String nome, String descricao, BigDecimal preco, String imagem) {</span>
+<span class="fc" id="L170">        this.nome = nome;</span>
+<span class="fc" id="L171">        this.descricao = descricao;</span>
+<span class="fc" id="L172">        this.preco = preco;</span>
+<span class="fc" id="L173">        this.imagem = imagem;</span>
+<span class="fc" id="L174">    }</span>
+
+    // =========================================================================
+    // GETTERS E SETTERS
+    // =========================================================================
+
+    public Long getId() {
+<span class="fc" id="L181">        return id;</span>
+    }
+
+    public void setId(Long id) {
+<span class="fc" id="L185">        this.id = id;</span>
+<span class="fc" id="L186">    }</span>
+
+    public String getNome() {
+<span class="fc" id="L189">        return nome;</span>
+    }
+
+    public void setNome(String nome) {
+<span class="fc" id="L193">        this.nome = nome;</span>
+<span class="fc" id="L194">    }</span>
+
+    public String getDescricao() {
+<span class="fc" id="L197">        return descricao;</span>
+    }
+
+    public void setDescricao(String descricao) {
+<span class="fc" id="L201">        this.descricao = descricao;</span>
+<span class="fc" id="L202">    }</span>
+
+    public BigDecimal getPreco() {
+<span class="fc" id="L205">        return preco;</span>
+    }
+
+    public void setPreco(BigDecimal preco) {
+<span class="fc" id="L209">        this.preco = preco;</span>
+<span class="fc" id="L210">    }</span>
+
+    public String getImagem() {
+<span class="fc" id="L213">        return imagem;</span>
+    }
+
+    public void setImagem(String imagem) {
+<span class="fc" id="L217">        this.imagem = imagem;</span>
+<span class="fc" id="L218">    }</span>
+
+    public Instant getCriadoEm() {
+<span class="fc" id="L221">        return criadoEm;</span>
+    }
+
+    public void setCriadoEm(Instant criadoEm) {
+<span class="fc" id="L225">        this.criadoEm = criadoEm;</span>
+<span class="fc" id="L226">    }</span>
+
+    public Instant getAtualizadoEm() {
+<span class="fc" id="L229">        return atualizadoEm;</span>
+    }
+
+    public void setAtualizadoEm(Instant atualizadoEm) {
+<span class="fc" id="L233">        this.atualizadoEm = atualizadoEm;</span>
+<span class="fc" id="L234">    }</span>
+
+    @Override
+    public String toString() {
+<span class="fc" id="L238">        return &quot;Produto{id=&quot; + id + &quot;, nome='&quot; + nome + &quot;', preco=&quot; + preco + &quot;}&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

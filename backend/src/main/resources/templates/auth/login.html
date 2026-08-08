@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Login — Mercado DSC</title>
+    <style>
+        :root {
+            /* Background colors */
+            --first-color: #ff5a3c;
+            --second-color: #FFAEA1;
+            --third-color: #fff;
+            --fourth-color: #FA7761;
+            --fifth-color: #2B2E34;
+            --sixth-color: #1d1f23;
+            --seventh-color: #333;
+
+            /* Text colors */
+            --text-first-color: #fff;
+            --text-second-color: #783131;
+            --text-third-color: #f66249;
+            --text-gray: #a4a4a4;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background-color: #f2f2f2;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 370px;
+            padding: 15px;
+        }
+
+        .logo {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pbx-logo {
+            width: 5rem;
+            height: auto;
+        }
+
+        .card {
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            width: 100%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        label {
+            font-size: 14px;
+            color: #555;
+            margin-top: 15px;
+            display: block;
+            font-weight: 500;
+        }
+
+        label:first-of-type {
+            margin-top: 0;
+        }
+
+        input {
+            width: 100%;
+            padding: 11px;
+            margin-top: 6px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--first-color);
+        }
+
+        .password-field {
+            position: relative;
+        }
+
+        .btnOrange {
+            width: 100%;
+            margin-top: 20px;
+            padding: 11px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--first-color);
+            color: var(--text-first-color);
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .btnOrange:hover {
+            background-color: var(--second-color);
+            color: var(--text-second-color);
+        }
+
+        .forgot {
+            margin-top: 15px;
+            font-size: 13px;
+            color: #777;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .forgot:hover {
+            text-decoration: underline;
+        }
+
+        /* Alert styles matching the theme color palette */
+        .alert {
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            text-align: center;
+        }
+        .alert-danger {
+            background-color: #ffebe9;
+            border: 1px solid #ffc1c0;
+            color: #ff5a3c;
+        }
+        .alert-success {
+            background-color: #e6f6ec;
+            border: 1px solid #a3e2bc;
+            color: #2ecc71;
+        }
+        
+        /* Development Tip Alert */
+        .dev-tip {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #fafafa;
+            border: 1px dashed #ddd;
+            border-radius: 5px;
+            font-size: 12px;
+            color: #777;
+            text-align: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Logo -->
+    <div class="logo">
+        <img class="pbx-logo" th:src="@{/images/logo.png}" alt="Logo" />
+    </div>
+
+    <!-- Login Card -->
+    <div class="card">
+        <!-- Error Alert -->
+        <div th:if="${param.error}" class="alert alert-danger" role="alert">
+            Usuário ou senha inválidos. Tente novamente.
+        </div>
+
+        <!-- Success Alert (Logout) -->
+        <div th:if="${param.logout}" class="alert alert-success" role="alert">
+            Logout realizado com sucesso!
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            <label for="username">Endereço de email</label>
+            <input
+                type="text"
+                id="username"
+                name="username"
+                placeholder="email@gmail.com"
+                required
+                autofocus
+            />
+
+            <label for="password">Senha</label>
+            <div class="password-field">
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="********"
+                    required
+                />
+            </div>
+
+            <button type="submit" class="btnOrange">Entrar</button>
+        </form>
+    </div>
+
+    <p class="forgot">Esqueceu sua senha?</p>
+
+    <!-- Credentials Tip (development only) -->
+    <div class="dev-tip">
+        <strong>Modo de Desenvolvimento:</strong><br/>
+        Use <code>admin</code> e senha <code>admin123</code>
+    </div>
+</div>
+
+</body>
+</html>

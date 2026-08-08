@@ -1,0 +1,157 @@
+.fav-container {
+  background-color: #2c2f36; 
+  color: white;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+}
+
+.fav-header {
+  background-color: #23262b;
+  padding: 12px 0;
+  border-bottom: 1px solid #3e424b;
+}
+
+.header-limit {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.logo-area img {
+  height: 40px;
+  width: auto;
+}
+
+.search-box {
+  background: #3e424b;
+  display: flex;
+  align-items: center;
+  padding: 8px 15px;
+  border-radius: 6px;
+  width: 40%;
+}
+
+.search-box input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: white;
+  width: 100%;
+}
+
+.search-btn-icon { color: #ccc; }
+
+.nav-icons { display: flex; align-items: center; gap: 20px; }
+
+.icon-circle {
+  background: #3e424b;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #ccc;
+}
+
+.icon-circle.active {
+  border: 1px solid #ccc; 
+}
+
+.nav-icon { font-size: 22px; color: #ccc; cursor: pointer; }
+
+.profile-avatar {
+  background: #60646b;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.fav-content {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 50px 20px;
+}
+
+.main-title {
+  text-align: center;
+  margin-bottom: 50px;
+  font-size: 36px;
+  font-weight: bold;
+}
+
+.column-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  padding: 0 10px;
+}
+
+.fav-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 10px;
+}
+
+.item-info {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+
+.item-image img {
+  width: 100px;
+  height: 125px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.item-details h3 {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.price-qty {
+  display: flex;
+  gap: 35px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.item-total {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.btn-continue {
+  background-color: #ff5a43;
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  margin-top: 60px;
+  transition: 0.3s;
+}
+
+.btn-continue:hover {
+  background-color: #e54e3a;
+  transform: translateY(-2px);
+}

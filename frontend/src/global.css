@@ -1,0 +1,18 @@
+:root {
+    /* Backgournd colors */
+  --first-color: #ff5a3c;
+  --second-color: #FFAEA1;
+  --third-color: #fff;
+  --fourth-color: #FA7761;
+  --fifth-color: #2B2E34;
+  --sixth-color: #1d1f23;
+  --seventh-color: #333;
+
+    /* Text colors */
+  --text-first-color: #fff;
+  --text-second-color: #783131;
+  --text-third-color: #f66249;
+  --text-gray: #a4a4a4;
+
+  --icons-background-first: #808080ae;
+}

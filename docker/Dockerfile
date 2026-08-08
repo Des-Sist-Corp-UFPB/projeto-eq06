@@ -13,17 +13,30 @@
 #   docker build -f docker/Dockerfile -t mercado:latest .
 # =============================================================================
 
-# ---- Estágio 1: Build -------------------------------------------------------
+# ---- Estágio 1: Build Frontend (React) --------------------------------------
+FROM node:20-alpine AS frontend-builder
+WORKDIR /frontend
+COPY frontend/package*.json ./
+RUN npm install
+COPY frontend/ .
+RUN npm run build
+
+# ---- Estágio 2: Build Backend (Java) ---------------------------------------
 FROM maven:3.9.9-eclipse-temurin-21 AS builder
 
 WORKDIR /build
 
 # Copiar pom.xml primeiro para cache de dependências
-COPY pom.xml .
+COPY backend/pom.xml .
 RUN mvn dependency:go-offline -B -q
 
 # Copiar código-fonte e compilar
-COPY src ./src
+COPY backend/src ./src
+
+# O vite.config.js do projeto está configurado para salvar em ../src/main/resources/static
+# Então o build vai parar na raiz do container do builder, na pasta /src/main/resources/static
+COPY --from=frontend-builder /src/main/resources/static ./src/main/resources/static
+
 RUN mvn clean package -DskipTests -B -q
 
 # ---- Estágio 2: Runtime -----------------------------------------------------
@@ -39,8 +52,11 @@ WORKDIR /app
 # Copiar apenas o JAR do estágio anterior
 COPY --from=builder /build/target/*.jar app.jar
 
-# Definir owner do arquivo
-RUN chown mercado:mercado app.jar
+# Baixar o agente do OpenTelemetry
+RUN wget -qO opentelemetry-javaagent.jar https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar
+
+# Definir owner do arquivo e da pasta do app
+RUN mkdir -p /app/uploads && chown -R mercado:mercado /app
 
 # Trocar para usuário não-root
 USER mercado
@@ -51,10 +67,17 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD wget -qO- http://localhost:8080/actuator/health || exit 1
 
+# Isso contorna a necessidade de atualizar o docker-compose.prod.yml no servidor manualmente
+ENV OTEL_SERVICE_NAME=dsc-eq06
+ENV OTEL_EXPORTER_OTLP_ENDPOINT=https://otel.dsc.rodrigor.com
+ENV OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+ENV OTEL_EXPORTER_OTLP_HEADERS="Authorization=Bearer 97c3e0bbc4345cd0679de6849ab20ed8b7b798f8614d2523"
+
 # Opções JVM para produção:
 #   -XX:+UseContainerSupport: respeita limites de memória do container
 #   -XX:MaxRAMPercentage=75: usa até 75% da RAM disponível para o heap
 ENTRYPOINT ["java", \
+    "-javaagent:opentelemetry-javaagent.jar", \
     "-XX:+UseContainerSupport", \
     "-XX:MaxRAMPercentage=75.0", \
     "-Dspring.profiles.active=prod", \

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SpaController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mercado</a> &gt; <a href="index.source.html" class="el_package">br.ufpb.dsc.mercado.controller</a> &gt; <span class="el_source">SpaController.java</span></div><h1>SpaController.java</h1><pre class="source lang-java linenums">package br.ufpb.dsc.mercado.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+/**
+ * Controller responsável por encaminhar as rotas do frontend (React Router)
+ * para o index.html, permitindo que a navegação do lado do cliente funcione.
+ */
+@Controller
+<span class="fc" id="L11">public class SpaController {</span>
+
+    @GetMapping(value = {
+        &quot;/main&quot;,
+        &quot;/login&quot;,
+        &quot;/favorites&quot;,
+        &quot;/criar-conta&quot;,
+        &quot;/info/{id}&quot;,
+        &quot;/checkout&quot;,
+        &quot;/auditoria&quot;
+    })
+    public String forward() {
+        // Encaminha internamente para o index.html gerado pelo React
+<span class="fc" id="L24">        return &quot;forward:/index.html&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

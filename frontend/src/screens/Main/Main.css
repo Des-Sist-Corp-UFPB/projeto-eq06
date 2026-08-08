@@ -1,0 +1,362 @@
+:root {
+    --dark-bg: #1d1f23;
+    --card-bg: #2c2e33;
+    --accent: #ee7b5b;
+    --blue-x: #FFF;
+    --text-white: #ffffff;
+    --text-gray: #a4a4a4;
+}
+
+.pbx-container {
+    background-color: var(--dark-bg);
+    color: var(--text-white);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.pbx-logo-carrossel{
+    width: 6rem;
+    margin-bottom: -30px;
+    transform: rotateZ(-15deg);
+}
+
+.btn-login {
+    background: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-register {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.hero {
+    height: 450px;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 5%;
+    position: relative;
+    transition: background-image 0.8s ease-in-out;
+}
+
+.hero h1 {
+    font-size: 50px;
+    margin-bottom: 10px;
+    color: var(--text-white);
+}
+
+.hero h1 span {
+    color: var(--accent);
+}
+
+.brand-help {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.brand-help .p {
+    color: #dd8a7b;
+    font-weight: bold;
+}
+
+.brand-help .b {
+    color: #2ecc71;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+.brand-help .x {
+    color: #6c2bd9;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+.brand-help span {
+    color: var(--blue-x);
+}
+
+.carousel-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    background: var(--text-gray);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.dot.active {
+    background: var(--accent);
+}
+
+.product-section {
+    padding: 50px 5%;
+}
+
+.product-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.sort-select {
+    background-color: var(--card-bg);
+    color: var(--text-white);
+    border: 1px solid #444;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.sort-select:hover, .sort-select:focus {
+    border-color: var(--accent);
+}
+
+.sort-select option {
+    background-color: var(--card-bg);
+    color: var(--text-white);
+}
+
+@media (max-width: 768px) {
+    .catalog-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+}
+
+.product-card {
+    background: var(--card-bg);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+.image-container {
+    position: relative;
+    height: 250px;
+}
+
+.image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.wishlist-icon {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 8px;
+    border-radius: 50%;
+    color: var(--text-gray);
+}
+
+.product-info {
+    padding: 20px;
+}
+
+.price {
+    font-size: 22px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.location {
+    color: var(--text-gray);
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.btn-details {
+    width: 100%;
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.footer {
+    background: #16181b;
+    padding: 60px 5% 20px;
+    margin-top: 50px;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 40px;
+}
+
+.footer-col h4 {
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+
+.footer-col p,
+.footer-col ul {
+    color: var(--text-gray);
+    font-size: 14px;
+    list-style: none;
+    padding: 0;
+}
+
+.footer-col a {
+    color: var(--text-gray);
+    text-decoration: none;
+}
+
+.footer-col a:hover {
+    color: var(--accent);
+}
+
+.footer-social-large {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    font-size: 30px;
+    margin: 50px 0;
+    color: var(--text-gray);
+}
+
+.footer-bottom {
+    border-top: 1px solid #333;
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-social-small {
+    display: flex;
+    gap: 15px;
+    font-size: 18px;
+    color: var(--text-gray);
+}
+
+.copyright {
+    font-size: 14px;
+}
+
+.fab-add-product {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--orange);
+    color: var(--white);
+    border: none;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(243, 107, 34, 0.4);
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+    z-index: 100;
+}
+
+.fab-add-product:hover {
+    transform: scale(1.1);
+    background-color: #d85718;
+    box-shadow: 0 6px 20px rgba(243, 107, 34, 0.6);
+}
+
+.fab-add-product:active {
+    transform: scale(0.95);
+}
+
+/* Custom Modal Styles */
+.custom-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.custom-modal {
+    background-color: var(--card-bg);
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    border: 1px solid #444;
+}
+
+.custom-modal-actions {
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.btn-cancel {
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: 1px solid #666;
+    background-color: transparent;
+    color: var(--text-white);
+    font-weight: bold;
+    cursor: pointer;
+    flex: 1;
+    transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.btn-confirm-delete {
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    background-color: #d9381e;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    flex: 1;
+    transition: all 0.2s;
+}
+
+.btn-confirm-delete:hover {
+    background-color: #ff472e;
+}

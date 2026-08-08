@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Usuario.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mercado</a> &gt; <a href="index.source.html" class="el_package">br.ufpb.dsc.mercado.domain</a> &gt; <span class="el_source">Usuario.java</span></div><h1>Usuario.java</h1><pre class="source lang-java linenums">package br.ufpb.dsc.mercado.domain;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = &quot;usuario&quot;)
+<span class="fc" id="L8">public class Usuario {</span>
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String nome;
+
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(length = 20)
+    private String cpf;
+
+    @Column(nullable = false)
+    private String senha;
+
+    @Column(name = &quot;criado_em&quot;, updatable = false)
+    private LocalDateTime criadoEm;
+
+    @Column(name = &quot;atualizado_em&quot;)
+    private LocalDateTime atualizadoEm;
+
+    @PrePersist
+    protected void onCreate() {
+<span class="fc" id="L34">        this.criadoEm = LocalDateTime.now();</span>
+<span class="fc" id="L35">        this.atualizadoEm = LocalDateTime.now();</span>
+<span class="fc" id="L36">    }</span>
+
+    @PreUpdate
+    protected void onUpdate() {
+<span class="fc" id="L40">        this.atualizadoEm = LocalDateTime.now();</span>
+<span class="fc" id="L41">    }</span>
+
+    // Getters e Setters
+
+    public Long getId() {
+<span class="fc" id="L46">        return id;</span>
+    }
+
+    public void setId(Long id) {
+<span class="fc" id="L50">        this.id = id;</span>
+<span class="fc" id="L51">    }</span>
+
+    public String getNome() {
+<span class="fc" id="L54">        return nome;</span>
+    }
+
+    public void setNome(String nome) {
+<span class="fc" id="L58">        this.nome = nome;</span>
+<span class="fc" id="L59">    }</span>
+
+    public String getEmail() {
+<span class="fc" id="L62">        return email;</span>
+    }
+
+    public void setEmail(String email) {
+<span class="fc" id="L66">        this.email = email;</span>
+<span class="fc" id="L67">    }</span>
+
+    public String getCpf() {
+<span class="fc" id="L70">        return cpf;</span>
+    }
+
+    public void setCpf(String cpf) {
+<span class="fc" id="L74">        this.cpf = cpf;</span>
+<span class="fc" id="L75">    }</span>
+
+    public String getSenha() {
+<span class="fc" id="L78">        return senha;</span>
+    }
+
+    public void setSenha(String senha) {
+<span class="fc" id="L82">        this.senha = senha;</span>
+<span class="fc" id="L83">    }</span>
+
+    public LocalDateTime getCriadoEm() {
+<span class="fc" id="L86">        return criadoEm;</span>
+    }
+
+    public void setCriadoEm(LocalDateTime criadoEm) {
+<span class="fc" id="L90">        this.criadoEm = criadoEm;</span>
+<span class="fc" id="L91">    }</span>
+
+    public LocalDateTime getAtualizadoEm() {
+<span class="fc" id="L94">        return atualizadoEm;</span>
+    }
+
+    public void setAtualizadoEm(LocalDateTime atualizadoEm) {
+<span class="fc" id="L98">        this.atualizadoEm = atualizadoEm;</span>
+<span class="fc" id="L99">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

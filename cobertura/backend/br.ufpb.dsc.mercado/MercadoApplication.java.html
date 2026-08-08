@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MercadoApplication.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mercado</a> &gt; <a href="index.source.html" class="el_package">br.ufpb.dsc.mercado</a> &gt; <span class="el_source">MercadoApplication.java</span></div><h1>MercadoApplication.java</h1><pre class="source lang-java linenums">package br.ufpb.dsc.mercado;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+/**
+ * Classe principal da aplicação Mercado.
+ *
+ * &lt;p&gt;A anotação {@code @SpringBootApplication} é um atalho que combina três anotações:
+ * &lt;ul&gt;
+ *   &lt;li&gt;{@code @Configuration} — indica que esta classe pode declarar beans Spring (métodos @Bean).&lt;/li&gt;
+ *   &lt;li&gt;{@code @EnableAutoConfiguration} — habilita a autoconfiguração do Spring Boot, que detecta
+ *       automaticamente as dependências no classpath e configura beans necessários (ex.: DataSource
+ *       para o banco, DispatcherServlet para web, etc.).&lt;/li&gt;
+ *   &lt;li&gt;{@code @ComponentScan} — escaneia o pacote atual e todos os subpacotes procurando por
+ *       componentes Spring anotados com {@code @Component}, {@code @Service}, {@code @Repository},
+ *       {@code @Controller}, etc.&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * &lt;p&gt;&lt;strong&gt;Disciplina:&lt;/strong&gt; Desenvolvimento de Sistemas Corporativos (DSC)&lt;br&gt;
+ * &lt;strong&gt;Professor:&lt;/strong&gt; Rodrigo Rebouças — UFPB Campus IV
+ *
+ * @author DSC - UFPB Campus IV
+ * @version 0.0.1-SNAPSHOT
+ */
+@SpringBootApplication
+<span class="fc" id="L27">public class MercadoApplication {</span>
+
+    /**
+     * Ponto de entrada da JVM.
+     *
+     * &lt;p&gt;{@code SpringApplication.run()} inicializa o contexto do Spring, cria todos os beans,
+     * executa as migrações do Flyway e sobe o servidor embutido (Tomcat, por padrão).
+     *
+     * @param args argumentos de linha de comando (podem sobrescrever propriedades do application.yml)
+     */
+    public static void main(String[] args) {
+<span class="nc" id="L38">        SpringApplication.run(MercadoApplication.class, args);</span>
+<span class="nc" id="L39">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

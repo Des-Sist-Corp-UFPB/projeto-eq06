@@ -1,0 +1,150 @@
+.checkout-screen {
+  background-color: #ff5a43;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+  padding-bottom: 40px;
+}
+
+.checkout-header {
+  margin-top: 80px;
+  margin-bottom: 40px;
+}
+
+.checkout-logo {
+  height: 160px;
+  width: auto;
+}
+
+.checkout-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.checkout-card {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  width: 380px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-group label {
+  color: #666;
+  font-size: 14px;
+}
+
+.input-group input {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  outline: none;
+}
+
+.helper-text {
+  font-size: 12px;
+  color: #999;
+  margin-top: 5px;
+}
+
+.btn-confirmar {
+  background-color: #ff5a43;
+  color: #fff;
+  border: none;
+  padding: 14px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-confirmar:hover {
+  background-color: #e54e3a;
+}
+
+.success-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.success-gray-card {
+  background-color: rgba(188, 188, 188, 0.8);
+  width: 450px;
+  height: 250px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  position: relative;
+  padding-top: 30px;
+}
+
+.success-white-card {
+  background-color: #fff;
+  padding: 25px 30px;
+  border-radius: 12px;
+  width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.success-text {
+  color: #333;
+  text-align: center;
+  font-size: 15px;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.btn-confirmar-success {
+  width: 130px;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.btn-confirmar-success.coral {
+  background-color: #ff5a43;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.btn-confirmar-success.coral:active {
+  transform: scale(0.98);
+}
+
+.btn-confirmar-success.brown {
+  background-color: #bd4a3c;
+}
+
+.outside-button {
+  margin-top: 15px;
+}
+
+.btn-confirmar-success[disabled] {
+  cursor: not-allowed;
+  opacity: 0.7;
+  pointer-events: none;
+}
